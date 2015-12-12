@@ -29,7 +29,7 @@ public class LevelSelectionController : MonoBehaviour
     void Start()
     {
         // get number of players
-        numPlayers = 4;
+        numPlayers = 0;
 
         if (GameObject.FindGameObjectWithTag(Tags.DeviceBag) != null && GameObject.FindGameObjectWithTag(Tags.DeviceBag).GetComponent<JoinScreenController>() != null)
         {
@@ -81,7 +81,17 @@ public class LevelSelectionController : MonoBehaviour
             currentIndex = Mathf.Clamp(currentIndex - 1, 0, validLevels.Count - 1);
         }
 
+        if (InputManager.ActiveDevice.Action1.WasPressed || InputManager.ActiveDevice.Command.WasPressed)
+        {
+            LoadLevel(currentIndex);
+        }
+
         float targetX = currentIndex * (width - spacing);
         levelPanelsParent.transform.position = Vector3.Lerp(levelPanelsParent.transform.position, zeroPosition + targetX * Vector3.left, Time.deltaTime / smoothing );
+    }
+
+    void LoadLevel(int index)
+    {
+        Application.LoadLevel(validLevels[index].levelIndex);
     }
 }
