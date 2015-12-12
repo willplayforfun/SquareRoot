@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class State : MonoBehaviour {
-	// Use this for initialization
-	void Start () {
-	    
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public class State {
+
+    protected TendrilNode mOwner;
+    protected float timeInState = 0;
+    public State(TendrilNode obj)
+    {
+        mOwner = obj;
+    }
+
+    public virtual void UpdateState() // Gets called every frame by the owner node
+    {
+        timeInState += Time.deltaTime;
+    }
 }
