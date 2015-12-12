@@ -9,7 +9,7 @@ public class TendrilTip : TendrilNode
     float timeSinceNodeDropped = 0.0f;
     
 
-    void Start()
+    protected override void Start()
     {
         base.Start();
         //TEST
@@ -17,7 +17,7 @@ public class TendrilTip : TendrilNode
     }
 
 
-    void Update()
+    protected override void Update()
     {
         timeSinceNodeDropped += Time.deltaTime;
         base.Update();

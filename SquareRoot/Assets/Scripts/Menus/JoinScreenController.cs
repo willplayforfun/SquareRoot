@@ -59,8 +59,13 @@ public class JoinScreenController : MonoBehaviour
         gameObject.tag = Tags.DeviceBag;
     }
 
-    void OnLevelLoad(int index)
+    void OnLevelWasLoaded(int index)
     {
+        foreach(PlayerDeviceCoupling player in players)
+        {
+            Debug.LogFormat("{0} player device... known: {1}, attached {2}... named {3}", player.number.ToString(), player.device.IsKnown, player.device.IsAttached, player.device.Name);
+        }
+
         if(index < Levels.LevelSelection)
         {
             Destroy(gameObject);
@@ -81,6 +86,8 @@ public class JoinScreenController : MonoBehaviour
                 // if device is new, add a player
                 if (ThereIsNoPlayerUsingDevice(inputDevice))
                 {
+                    Debug.LogFormat("Adding device {0}", inputDevice.Name);
+
                     AddDevice(inputDevice);
                 }
                 else

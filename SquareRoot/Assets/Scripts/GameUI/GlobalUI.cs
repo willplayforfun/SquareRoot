@@ -1,15 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class GlobalUI : MonoBehaviour
 {
+    // references to UI elements in scene
     public Text victoryText;
     public GameObject scoreScreen;
+    public GameObject pauseMenu;
 
     void Start()
     {
         victoryText.gameObject.SetActive(false);
         scoreScreen.SetActive(false);
+
+        HidePauseMenu();
+    }
+
+    public void ShowPauseMenu()
+    {
+        //EventSystem.current.SetSelectedGameObject(pauseMenu.GetComponentInChildren<Button>().gameObject);
+        pauseMenu.SetActive(true);
+    }
+
+    public void HidePauseMenu()
+    {
+        pauseMenu.SetActive(false);
     }
 
     public void SetVictoryText(PlayerNum playerNumber)
@@ -35,6 +51,12 @@ public class GlobalUI : MonoBehaviour
         text += " Wins!";
 
         victoryText.text = text;
+        victoryText.gameObject.SetActive(true);
+    }
+
+    public void SetDrawText()
+    {
+        victoryText.text = "Draw! Everyone loses!";
         victoryText.gameObject.SetActive(true);
     }
 }
