@@ -15,12 +15,21 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        if (GameObject.FindGameObjectWithTag(Tags.DeviceBag) == null || GameObject.FindGameObjectWithTag(Tags.DeviceBag).GetComponent<JoinScreenController>() == null)
+        {
+            Debug.LogError("NO DEVICE/PLAYER LIST!");
+        }
+
+        JoinScreenController jsc = GameObject.FindGameObjectWithTag(Tags.DeviceBag).GetComponent<JoinScreenController>();
+        numPlayers = jsc.playerList.Count;
+
         // spawn requisite number of players and have them configure for split screen
         players = new List<PlayerObject>();
         for(int i = 0; i < numPlayers; i++)
         {
             PlayerObject player = Instantiate(playerPrefab);
-            player.SetPlayerNumber((PlayerNum)i, numPlayers);
+            player.SetInputDevice(jsc.playerList[i].device);
+            player.SetPlayerNumber(jsc.playerList[i].number, numPlayers);
             players.Add(player);
         }
     }

@@ -17,6 +17,8 @@ public class PlayerDeviceCoupling
 
 public class JoinScreenController : MonoBehaviour
 {
+    private bool loaded;
+
     private List<PlayerDeviceCoupling> players;
     public List<PlayerDeviceCoupling> playerList
     {
@@ -36,11 +38,15 @@ public class JoinScreenController : MonoBehaviour
 
     void LoadGame()
     {
+		InputManager.OnDeviceDetached -= OnDeviceDetached;
+        loaded = true;
         Application.LoadLevel(Levels.LevelSelection);
     }
 
     void Start()
     {
+		InputManager.OnDeviceDetached += OnDeviceDetached;
+
         player1Pane.Appear();
         player2Pane.Disappear();
         player3Pane.Disappear();
@@ -53,36 +59,47 @@ public class JoinScreenController : MonoBehaviour
         gameObject.tag = Tags.DeviceBag;
     }
 
+    void OnLevelLoad(int index)
+    {
+        if(index < Levels.LevelSelection)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Update()
     {
-        InputDevice inputDevice = InputManager.ActiveDevice;
-
-        // when A or start is pressed
-        if (JoinButtonWasPressedOnDevice(inputDevice))
+        if (!loaded)
         {
-            Debug.LogFormat("Join pressed on device {0}", inputDevice.Name);
+            InputDevice inputDevice = InputManager.ActiveDevice;
 
-            // if device is new, add a player
-            if (ThereIsNoPlayerUsingDevice(inputDevice))
+            // when A or start is pressed
+            if (JoinButtonWasPressedOnDevice(inputDevice))
             {
-                AddDevice(inputDevice);
+                Debug.LogFormat("Join pressed on device {0}", inputDevice.Name);
+
+                // if device is new, add a player
+                if (ThereIsNoPlayerUsingDevice(inputDevice))
+                {
+                    AddDevice(inputDevice);
+                }
+                else
+                {
+                    Debug.LogFormat("Starting game with {0} players", currentPlayerCount);
+
+                    // start game if the controller is already registered
+                    LoadGame();
+                }
             }
-            else
-            {
-                Debug.LogFormat("Starting game with {0} players", currentPlayerCount);
 
-                // start game if the controller is already registered
-                LoadGame();
-            }
-        }
-
-        // allow players to leave
-        if (LeaveButtonWasPressedOnDevice(inputDevice))
-        {
-            PlayerDeviceCoupling player = FindPlayerUsingDevice(inputDevice);
-            if (player != null)
+            // allow players to leave
+            if (LeaveButtonWasPressedOnDevice(inputDevice))
             {
-                RemovePlayer(player);
+                PlayerDeviceCoupling player = FindPlayerUsingDevice(inputDevice);
+                if (player != null)
+                {
+                    RemovePlayer(player);
+                }
             }
         }
     }
