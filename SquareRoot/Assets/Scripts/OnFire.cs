@@ -2,6 +2,12 @@
 using System.Collections;
 
 public class OnFire : State {
+
+    /**
+     * State for nodes that are on fire
+     * Fire begins to spread in timeUntilFireSpread seconds
+     * Node's state becomes "Dead" in timeUntilFireOut seconds from fire's start
+     */
     static double timeUntilFireSpread = 3.0f;
     static double timeUntilFireOut = 10.0f;
 
@@ -28,7 +34,7 @@ public class OnFire : State {
         }
         if (timeInState > timeUntilFireOut)
         {
-            //GameObject.Destroy(mOwner.gameObject);
+            mOwner.mState = new Dead(mOwner);
         }
     }
 }

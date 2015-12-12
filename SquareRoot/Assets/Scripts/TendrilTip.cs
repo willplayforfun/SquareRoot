@@ -56,7 +56,7 @@ public class TendrilTip : TendrilNode
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "fire" && typeof(OnFire) != mState.GetType() ){
+        if (coll.gameObject.tag == "fire" && typeof(OnFire) != mState.GetType() ){ 
             Debug.Log("hit fire");
             mState = new OnFire(this);
         }

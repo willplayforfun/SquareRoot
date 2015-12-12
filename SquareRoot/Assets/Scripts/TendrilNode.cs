@@ -57,4 +57,9 @@ public class TendrilNode : MonoBehaviour
     {
         return transform.position;
     }
+
+    public List<TendrilNode> GetChildren()
+    {
+        return children;
+    }
 }
