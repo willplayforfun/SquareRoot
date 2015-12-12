@@ -8,12 +8,6 @@ public class FollowingCamera : MonoBehaviour
         Moderate,
         BestQuality
     }
-
-	//camera boundaries 
-	public float minX;
-	public float maxX;
-	public float minY;
-	public float maxY;
 	
     public float horizontalDampening = 0.4f;
     public float verticalDampening = 0.4f;
@@ -25,12 +19,6 @@ public class FollowingCamera : MonoBehaviour
 
     void Start()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if(player != null)
-        {
-            SetTrackingTarget(player.transform);
-        }
-
         switch((QualityLevel)QualitySettings.GetQualityLevel())
         {
             case QualityLevel.Fastest:
@@ -46,14 +34,15 @@ public class FollowingCamera : MonoBehaviour
                 Debug.LogWarning("Encountered an unexpected quality level value");
                 break;
         }
-        
-        
     }
 
     public void SetTrackingTarget(Transform target)
     {
         trackingTransform = target;
-        constantOffset = this.transform.position - trackingTransform.position;
+        if(target != null)
+        {
+            constantOffset = this.transform.position - trackingTransform.position;
+        }
     }
 
     public void ApplyShock(float force)
@@ -79,15 +68,9 @@ public class FollowingCamera : MonoBehaviour
         {
             Vector3 targetPosition = trackingTransform.position + constantOffset;
             Vector3 currentPosition = transform.position;
-			Vector3 v3;
-			v3.x = Mathf.Lerp(currentPosition.x, targetPosition.x, Time.deltaTime / horizontalDampening);
-			v3.y = Mathf.Lerp(currentPosition.y, targetPosition.y, Time.deltaTime / verticalDampening); 
-			transform.position = new Vector3(Mathf.Clamp(v3.x, minX, maxX),
-			                                 Mathf.Clamp(v3.y, minY, maxY), 
+			transform.position = new Vector3(Mathf.Lerp(currentPosition.x, targetPosition.x, Time.deltaTime / horizontalDampening),
+                                             Mathf.Lerp(currentPosition.y, targetPosition.y, Time.deltaTime / verticalDampening), 
 			                                 targetPosition.z) + (Vector3)screenShakeOffset;
         }
-        
-       	//camera boundaries 
-       	
     }
 }
