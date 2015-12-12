@@ -3,7 +3,7 @@ using System.Collections;
 
 public class State : MonoBehaviour {
 	// Use this for initialization
-	virtual void Start () {
+	void Start () {
 	    
 	}
 	
