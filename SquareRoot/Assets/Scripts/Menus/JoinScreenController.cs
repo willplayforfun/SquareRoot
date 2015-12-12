@@ -61,14 +61,21 @@ public class JoinScreenController : MonoBehaviour
 
     void OnLevelWasLoaded(int index)
     {
-        foreach(PlayerDeviceCoupling player in players)
+        if(index != Levels.JoinScreen)
         {
-            Debug.LogFormat("{0} player device... known: {1}, attached {2}... named {3}", player.number.ToString(), player.device.IsKnown, player.device.IsAttached, player.device.Name);
-        }
+            if (index < Levels.LevelSelection)
+            {
+                Destroy(gameObject);
+                return;
+            }
 
-        if(index < Levels.LevelSelection)
-        {
-            Destroy(gameObject);
+            if (players != null)
+            {
+                foreach (PlayerDeviceCoupling player in players)
+                {
+                    Debug.LogFormat("{0} player device... known: {1}, attached {2}... named {3}", player.number.ToString(), player.device.IsKnown, player.device.IsAttached, player.device.Name);
+                }
+            }
         }
     }
 

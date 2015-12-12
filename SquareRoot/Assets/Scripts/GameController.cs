@@ -104,7 +104,7 @@ public class GameController : MonoBehaviour
             // DANGER:
             // execution will not reach here if multiple players are alive
 
-            if (alivePlayer != null)
+            if (alivePlayer != null && players.Count > 1)
             {
                 // win!
                 EndMatch(winner: alivePlayer);

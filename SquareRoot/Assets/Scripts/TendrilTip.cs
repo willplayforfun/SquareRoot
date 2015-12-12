@@ -3,19 +3,19 @@ using System.Collections;
 
 public class TendrilTip : TendrilNode
 {
+    public TendrilRoot tendrilRoot;
+
     Vector3 direction;
     static double nodeDropRate = 1; // distance between nodes
     float growthRate = 2.0f; //speed of the tip
     float timeSinceNodeDropped = 0.0f;
     
-
     protected override void Start()
     {
         base.Start();
         //TEST
         direction = Vector3.left;
     }
-
 
     protected override void Update()
     {
@@ -61,5 +61,15 @@ public class TendrilTip : TendrilNode
             mState = new OnFire(this);
         }
     }
-    
+
+    // input functions (called into by TendrilRoot)
+    public void StartBranch()
+    {
+    }
+    public void EndBranch()
+    {
+    }
+    public void BranchAim(Vector2 input)
+    {
+    }
 }

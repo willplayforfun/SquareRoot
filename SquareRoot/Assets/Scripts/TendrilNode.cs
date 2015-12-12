@@ -8,14 +8,14 @@ public class TendrilNode : MonoBehaviour
     public State mState;
     protected float timeActive = 0;
 
+    protected virtual void Awake()
+    {
+        children = new List<TendrilNode>();
+    }
     protected virtual void Start()
     {
         mState = new Alive(this);
         //children = new List<TendrilNode>();
-    }
-    void Awake()
-    {
-        children = new List<TendrilNode>();
     }
     protected virtual void Update()
     {
