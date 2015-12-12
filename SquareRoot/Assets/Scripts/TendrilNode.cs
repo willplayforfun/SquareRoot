@@ -21,7 +21,7 @@ public class TendrilNode : MonoBehaviour
     {
         timeActive += Time.deltaTime;
         mState.UpdateState();
-        if (parent)
+        if (children.Count > 0)
         {
            // Debug.DrawLine(transform.position, parent.GetPosition(), Color.red);
             foreach (TendrilNode t in children){

@@ -19,8 +19,8 @@ public class TendrilTip : TendrilNode
 
     void Update()
     {
-        timeSinceNodeDropped += Time.deltaTime;
         base.Update();
+        timeSinceNodeDropped += Time.deltaTime;
         transform.position += growthRate * Time.deltaTime * direction;
         //Debug.Log("tip active for " + timeActive);
         if (nodeDropRate - timeSinceNodeDropped*growthRate <= 0) // if reached nodeDropRate distance since last node, make a new node

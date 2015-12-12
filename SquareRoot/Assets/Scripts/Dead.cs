@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Dead : State {
+    static float timeUntilDecompose = 4.0f;
     public Dead(TendrilNode obj)
         : base(obj)
     {
@@ -13,8 +14,12 @@ public class Dead : State {
 	
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	// Update is called once per frame in mOwner
+	public override void UpdateState () {
+        base.UpdateState();
+        if (timeInState > timeUntilDecompose)
+        {
+            /*Todo*/
+        }
 	}
 }

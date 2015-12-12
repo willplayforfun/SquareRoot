@@ -12,6 +12,7 @@ public class OnFire : State {
     }
 
     public override void UpdateState() {
+        base.UpdateState();
         timeInState += Time.deltaTime;
         Debug.Log("AAHHHH BURNING " + mOwner.GetPosition());
         if (timeInState > timeUntilFireSpread && timeInState < timeUntilFireOut)
@@ -19,12 +20,15 @@ public class OnFire : State {
             foreach (TendrilNode neighbor in mOwner.GetNeighbors())
             {
                 if (neighbor.mState.GetType() == typeof(Alive)) // if it's dead or burning, won't catch fire again
+                {
                     neighbor.mState = new OnFire(neighbor);
+                    Debug.Log("Fire Spreading to " + neighbor.GetPosition());
+                }
             }
         }
         if (timeInState > timeUntilFireOut)
         {
-            GameObject.Destroy(mOwner.gameObject);
+            //GameObject.Destroy(mOwner.gameObject);
         }
     }
 }
