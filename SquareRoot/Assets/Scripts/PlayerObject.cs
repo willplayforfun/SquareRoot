@@ -11,10 +11,40 @@ public enum PlayerNum
 
 public class PlayerObject : MonoBehaviour
 {
+    // order in the list of players
+    PlayerNum playerNum;
+    public PlayerNum number
+    {
+        get
+        {
+            return playerNum;
+        }
+    }
+
+    // is this player still active in the game? (have they lost yet?)
+    public bool alive
+    {
+        get
+        {
+            return true;
+        }
+    }
+
+    // all present tendrils, alive or dead (until they decompose)
     List<TendrilRoot> roots;
 
+
+    void Update()
+    {
+    }
+
+    // initialization functions called by GameController at scene start
     public void SetPlayerNumber(PlayerNum num, int numPlayers)
     {
+        // store order
+        playerNum = num;
+
+        // set splitscreen
         Camera camera = GetComponentInChildren<Camera>();
         switch(num)
         {
