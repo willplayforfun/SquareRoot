@@ -3,10 +3,10 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
-    public static Color[] playerColors = { new Color(30, 167, 255),
-                                           new Color(232, 106, 23),
-                                           new Color(115, 205, 75),
-                                           new Color(255, 204, 0) };
+    public Color[] playerColors = { new Color(30, 167, 255),
+                                    new Color(232, 106, 23),
+                                    new Color(115, 205, 75),
+                                    new Color(255, 204, 0) };
 
     // GameController used to get required resource count
     GameController gameController;
@@ -21,12 +21,12 @@ public class PlayerUI : MonoBehaviour
         gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
 
         resourceBar.color = playerColors[(int)player.number];
-        needBar.color = playerColors[(int)player.number];
+        //needBar.color = playerColors[(int)player.number];
     }
 
     void Update()
     {
-        resourceBar.fillAmount = player.resources / PlayerObject.MaxResources;
-        needBar.fillAmount = gameController.requiredResources / PlayerObject.MaxResources;
+        resourceBar.fillAmount = Mathf.Floor(player.resources) / PlayerObject.MaxResources;
+        needBar.fillAmount = (float)gameController.requiredResources / (float)PlayerObject.MaxResources;
     }
 }

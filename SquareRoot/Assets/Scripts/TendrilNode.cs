@@ -31,6 +31,15 @@ public class TendrilNode : MonoBehaviour
         }
     }
 
+    // input functions (called down through tree from TendrilRoot)
+    public virtual void AccelerateGrowth()
+    {
+        foreach (TendrilNode child in children)
+        {
+            child.AccelerateGrowth();
+        }
+    }
+
     public List<TendrilNode> GetNeighbors()
     {
         List<TendrilNode> neighbors = new List<TendrilNode>();

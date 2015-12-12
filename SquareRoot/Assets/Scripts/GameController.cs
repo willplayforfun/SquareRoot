@@ -3,10 +3,15 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
+    public float resourceRate = 1f;
+
+    [Space(12)]
+
     // reference to GlobalUI in scene (for victory text, scoreboard, pause menu, etc.)
     public GlobalUI ui;
 
-    private bool matchOngoing;
+    public PlayerObject playerPrefab;
+    List<PlayerObject> players;
 
     private bool paused;
     public void TogglePause()
@@ -33,8 +38,8 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public float resourceRate = 1f;
-    float matchStart;
+    private bool matchOngoing;
+    private float matchStart;
     public int requiredResources
     {
         get
@@ -42,11 +47,6 @@ public class GameController : MonoBehaviour
             return Mathf.FloorToInt(resourceRate * (Time.time - matchStart));
         }
     }
-
-    [Space(12)]
-    
-    public PlayerObject playerPrefab;
-    List<PlayerObject> players;
 
     void Awake()
     {

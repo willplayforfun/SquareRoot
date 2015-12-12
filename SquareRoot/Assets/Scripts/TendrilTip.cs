@@ -62,14 +62,23 @@ public class TendrilTip : TendrilNode
         }
     }
 
+    // input functions (called down into by parent)
+    public override void AccelerateGrowth()
+    {
+
+    }
+
     // input functions (called into by TendrilRoot)
     public void StartBranch()
     {
+
     }
     public void EndBranch()
     {
+
     }
     public void BranchAim(Vector2 input)
     {
+
     }
 }

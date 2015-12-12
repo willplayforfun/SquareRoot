@@ -14,11 +14,18 @@ public class PlayerObject : MonoBehaviour
 {
     public static int MaxResources = 100;
 
+    public float cameraZoomSpeed = 2f;
+    public float maxCameraSize = 10;
+    public float minCameraSize = 3;
+
     // InControl device used for input
     InputDevice inputDevice;
 
     // GameController used to get required resource count and for pausing
     GameController gameController;
+
+    // Player camera for zooming and splitscreening
+    Camera playerCamera;
 
     // order in the list of players
     PlayerNum playerNum;
@@ -63,19 +70,41 @@ public class PlayerObject : MonoBehaviour
         }
     }
 
+    // spawned when a new tendril is created
+    public TendrilRoot tendrilPrefab;
+
     // all present tendrils, alive or dead (until they decompose)
     List<TendrilRoot> roots;
     // index in roots list of current player-controlled root
-    int activeRoot;
-
-    void Start()
+    int activeRootIndex;
+    private TendrilRoot activeRoot
     {
+        get
+        {
+            return roots[activeRootIndex];
+        }
+    }
+
+    void Awake()
+    {
+        playerCamera = GetComponentInChildren<Camera>();
         gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
 
         roots = new List<TendrilRoot>();
-        activeRoot = -1;
+        activeRootIndex = -1;
 
         alive_ = true;
+    }
+
+    public void SpawnTendril()
+    {
+        TendrilRoot newRoot = Instantiate(tendrilPrefab);
+        roots.Add(newRoot);
+
+        if(activeRootIndex < 0)
+        {
+            activeRootIndex = roots.Count - 1;
+        }
     }
 
     void Update()
@@ -94,32 +123,33 @@ public class PlayerObject : MonoBehaviour
 
         if (alive)
         {
-            if (activeRoot >= 0)
+            if (activeRootIndex >= 0)
             {
                 // branching
                 if (inputDevice.Action1.WasPressed)
                 {
                     Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
-                    roots[activeRoot].StartBranch();
+                    activeRoot.StartBranch();
                 }
                 if (inputDevice.Action1.WasReleased)
                 {
                     Debug.Log(number.ToString() + " player released Action 1 (branch).");
-                    roots[activeRoot].EndBranch();
+                    activeRoot.EndBranch();
                 }
-                roots[activeRoot].BranchAim(inputDevice.LeftStick.Vector);
+                activeRoot.BranchAim(inputDevice.LeftStick.Vector);
 
                 // cutting
                 if (inputDevice.Action2.WasPressed)
                 {
                     Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
-                    roots[activeRoot].CutTendril();
+                    activeRoot.CutTendril();
                 }
 
                 // accelerate growth
-                if (inputDevice.Action2.WasPressed)
+                if (inputDevice.AnyButton.WasPressed || inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed)
                 {
-                    roots[activeRoot].CutTendril();
+                    Debug.Log(number.ToString() + " player accelerating growth.");
+                    activeRoot.AccelerateGrowth();
                 }
             }
 
@@ -132,6 +162,8 @@ public class PlayerObject : MonoBehaviour
 
             // camera control
             float deltaY = inputDevice.RightStick.Y;
+            float originalSize = playerCamera.orthographicSize;
+            playerCamera.orthographicSize = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
         }
     }
 
@@ -149,49 +181,48 @@ public class PlayerObject : MonoBehaviour
         playerNum = num;
 
         // set splitscreen
-        Camera camera = GetComponentInChildren<Camera>();
         switch(num)
         {
             case PlayerNum.First:
                 if (numPlayers == 1)
                 {
-                    camera.rect = new Rect(0, 0, 1, 1);
+                    playerCamera.rect = new Rect(0, 0, 1, 1);
                 }
                 else if (numPlayers < 4)
                 {
-                    camera.rect = new Rect(0, 0.5f, 1, 0.5f);
+                    playerCamera.rect = new Rect(0, 0.5f, 1, 0.5f);
                 }
                 else
                 {
-                    camera.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
+                    playerCamera.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Second:
                 if (numPlayers == 2)
                 {
-                    camera.rect = new Rect(0, 0, 1, 0.5f);
+                    playerCamera.rect = new Rect(0, 0, 1, 0.5f);
                 }
                 else if (numPlayers == 3)
                 {
-                    camera.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    playerCamera.rect = new Rect(0, 0, 0.5f, 0.5f);
                 }
                 else if (numPlayers == 4)
                 {
-                    camera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    playerCamera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Third:
                 if (numPlayers == 4)
                 {
-                    camera.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    playerCamera.rect = new Rect(0, 0, 0.5f, 0.5f);
                 }
                 else
                 {
-                    camera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    playerCamera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Fourth:
-                camera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                playerCamera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
                 break;
         }
     }
