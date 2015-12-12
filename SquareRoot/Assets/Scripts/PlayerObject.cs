@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using InControl;
 
 public enum PlayerNum
 {
@@ -11,6 +12,9 @@ public enum PlayerNum
 
 public class PlayerObject : MonoBehaviour
 {
+    // InControl device used for input
+    InputDevice inputDevice;
+
     // order in the list of players
     PlayerNum playerNum;
     public PlayerNum number
@@ -38,7 +42,13 @@ public class PlayerObject : MonoBehaviour
     {
     }
 
-    // initialization functions called by GameController at scene start
+    // initialization function called by GameController at scene start
+    public void SetInputDevice(InputDevice device)
+    {
+        inputDevice = device;
+    }
+
+    // initialization function called by GameController at scene start
     public void SetPlayerNumber(PlayerNum num, int numPlayers)
     {
         // store order
@@ -49,7 +59,11 @@ public class PlayerObject : MonoBehaviour
         switch(num)
         {
             case PlayerNum.First:
-                if(numPlayers < 4)
+                if (numPlayers == 1)
+                {
+                    camera.rect = new Rect(0, 0, 1, 1);
+                }
+                else if (numPlayers < 4)
                 {
                     camera.rect = new Rect(0, 0.5f, 1, 0.5f);
                 }
