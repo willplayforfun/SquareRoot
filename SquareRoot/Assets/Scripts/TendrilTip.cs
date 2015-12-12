@@ -19,8 +19,8 @@ public class TendrilTip : TendrilNode
 
     protected override void Update()
     {
-        timeSinceNodeDropped += Time.deltaTime;
         base.Update();
+        timeSinceNodeDropped += Time.deltaTime;
         transform.position += growthRate * Time.deltaTime * direction;
         //Debug.Log("tip active for " + timeActive);
         if (nodeDropRate - timeSinceNodeDropped*growthRate <= 0) // if reached nodeDropRate distance since last node, make a new node
@@ -56,7 +56,7 @@ public class TendrilTip : TendrilNode
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "fire" && typeof(OnFire) != mState.GetType() ){
+        if (coll.gameObject.tag == "fire" && typeof(OnFire) != mState.GetType() ){ 
             Debug.Log("hit fire");
             mState = new OnFire(this);
         }

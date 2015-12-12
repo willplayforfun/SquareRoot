@@ -21,7 +21,7 @@ public class TendrilNode : MonoBehaviour
     {
         timeActive += Time.deltaTime;
         mState.UpdateState();
-        if (parent)
+        if (children.Count > 0)
         {
            // Debug.DrawLine(transform.position, parent.GetPosition(), Color.red);
             foreach (TendrilNode t in children){
@@ -56,5 +56,10 @@ public class TendrilNode : MonoBehaviour
     public Vector3 GetPosition()
     {
         return transform.position;
+    }
+
+    public List<TendrilNode> GetChildren()
+    {
+        return children;
     }
 }
