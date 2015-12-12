@@ -27,6 +27,9 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
+        // global input
+        
+
         // win condition check
         PlayerObject alivePlayer = null;
         foreach (PlayerObject player in players)
