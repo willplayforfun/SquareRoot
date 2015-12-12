@@ -121,7 +121,7 @@ public class PlayerObject : MonoBehaviour
 
         // handle input
 
-        if (alive)
+        if (alive && inputDevice != null)
         {
             if (activeRootIndex >= 0)
             {
@@ -154,7 +154,7 @@ public class PlayerObject : MonoBehaviour
             }
 
             // pause
-            if (inputDevice.MenuWasPressed)
+            if (inputDevice.MenuWasPressed || !inputDevice.IsAttached)
             {
                 Debug.Log(number.ToString() + " player pressed pause.");
                 gameController.TogglePause();
@@ -177,6 +177,8 @@ public class PlayerObject : MonoBehaviour
     // initialization function called by GameController at scene start
     public void SetPlayerNumber(PlayerNum num, int numPlayers)
     {
+        GetComponentInChildren<PlayerUI>().SetHUDPosition(num, numPlayers);
+
         // store order
         playerNum = num;
 
