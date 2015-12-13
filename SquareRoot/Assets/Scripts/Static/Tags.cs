@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class Tags
+﻿public class Tags
 {
     public static string DeviceBag = "DeviceBag";
     public static string GameController = "GameController";

@@ -27,7 +27,7 @@ public class TendrilNode : MonoBehaviour
             foreach (TendrilNode t in children){
                 Debug.DrawLine(transform.position, t.GetPosition(), Color.blue);
             }
-            Debug.Log("drew line"); 
+            //Debug.Log("drew line"); 
         }
     }
 

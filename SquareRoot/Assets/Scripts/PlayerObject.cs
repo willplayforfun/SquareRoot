@@ -96,6 +96,11 @@ public class PlayerObject : MonoBehaviour
         alive_ = true;
     }
 
+    void Start()
+    {
+        SpawnTendril();
+    }
+
     public void SpawnTendril()
     {
         TendrilRoot newRoot = Instantiate(tendrilPrefab);
@@ -146,7 +151,7 @@ public class PlayerObject : MonoBehaviour
                 }
 
                 // accelerate growth
-                if (inputDevice.AnyButton.WasPressed || inputDevice.LeftTrigger.WasPressed || inputDevice.RightTrigger.WasPressed)
+                if (inputDevice.LeftBumper.IsPressed || inputDevice.RightBumper.IsPressed || inputDevice.LeftTrigger.IsPressed || inputDevice.RightTrigger.IsPressed)
                 {
                     Debug.Log(number.ToString() + " player accelerating growth.");
                     activeRoot.AccelerateGrowth();

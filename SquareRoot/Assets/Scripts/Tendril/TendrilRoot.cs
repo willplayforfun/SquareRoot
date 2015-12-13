@@ -5,6 +5,13 @@ public class TendrilRoot : TendrilNode
 {
     public TendrilTip activeTip;
 
+    protected override void Start()
+    {
+        base.Start();
+
+        activeTip.growDirection = transform.up;
+    }
+
     // input functions (called into by PlayerObject)
     public void StartBranch()
     {
