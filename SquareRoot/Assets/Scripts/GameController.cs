@@ -64,25 +64,16 @@ public class GameController : MonoBehaviour
 
         JoinScreenController jsc = GameObject.FindGameObjectWithTag(Tags.DeviceBag).GetComponent<JoinScreenController>();
         int numPlayers = jsc.playerList.Count;
-        numPlayers = 3;
 
         // spawn requisite number of players and have them configure for split screen
         players = new List<PlayerObject>();
-        for(int i = 0; i < 1; i++)
+        for(int i = 0; i < numPlayers; i++)
         {
             PlayerObject player = Instantiate(playerPrefab);
             player.SetInputDevice(jsc.playerList[i].device);
             player.SetPlayerNumber(jsc.playerList[i].number, numPlayers);
             players.Add(player);
         }
-
-        PlayerObject player2 = Instantiate(playerPrefab);
-        player2.SetPlayerNumber(PlayerNum.Second, numPlayers);
-        players.Add(player2);
-
-        PlayerObject player3 = Instantiate(playerPrefab);
-        player3.SetPlayerNumber(PlayerNum.Third, numPlayers);
-        players.Add(player3);
 
         paused = false;
         matchStart = Time.time;

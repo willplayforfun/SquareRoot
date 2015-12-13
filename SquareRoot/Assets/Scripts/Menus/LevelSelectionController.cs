@@ -36,6 +36,12 @@ public class LevelSelectionController : MonoBehaviour
             JoinScreenController jsc = GameObject.FindGameObjectWithTag(Tags.DeviceBag).GetComponent<JoinScreenController>();
             numPlayers = jsc.playerList.Count;
         }
+        else
+        {
+            Debug.LogError("NO DEVICE/PLAYER LIST!");
+            Application.LoadLevel(Levels.JoinScreen);
+            return;
+        }
 
         Debug.Log(numPlayers + " players");
 
@@ -79,6 +85,12 @@ public class LevelSelectionController : MonoBehaviour
         if (InputManager.ActiveDevice.LeftStickLeft.WasPressed)
         {
             currentIndex = Mathf.Clamp(currentIndex - 1, 0, validLevels.Count - 1);
+        }
+
+        if (InputManager.ActiveDevice.Action2.WasPressed)
+        {
+            Destroy(GameObject.FindGameObjectWithTag(Tags.DeviceBag));
+            Application.LoadLevel(Levels.JoinScreen);
         }
 
         if (InputManager.ActiveDevice.Action1.WasPressed || InputManager.ActiveDevice.Command.WasPressed)
