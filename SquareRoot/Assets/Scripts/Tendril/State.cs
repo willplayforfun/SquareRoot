@@ -10,7 +10,7 @@ public class State {
         mOwner = obj;
     }
 
-    public virtual void UpdateState() // Gets called every frame by the owner node
+    public virtual void UpdateState(float deltaTime) // Gets called every frame by the owner node
     {
         timeInState += Time.deltaTime;
     }

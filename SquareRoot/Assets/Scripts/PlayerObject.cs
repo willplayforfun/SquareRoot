@@ -130,8 +130,10 @@ public class PlayerObject : MonoBehaviour
 
     public void SpawnTendril()
     {
-        foreach (SpawnPoint sp in mSpawnPoints){
-            if (!sp.IsInUse()){
+        foreach (SpawnPoint sp in mSpawnPoints)
+        {
+            if (!sp.IsInUse())
+            {
                 TendrilRoot newRoot = Instantiate(tendrilPrefab);
                 newRoot.transform.position = sp.position;
                 newRoot.transform.rotation = sp.rotation;
@@ -140,6 +142,8 @@ public class PlayerObject : MonoBehaviour
                 if (activeRootIndex < 0)
                 {
                     activeRootIndex = roots.Count - 1;
+                    playerCamera.transform.position = new Vector3(newRoot.activeTip.transform.position.x, newRoot.activeTip.transform.position.y, playerCamera.transform.position.z);
+                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform);
                 }
                 break;
             }
@@ -162,7 +166,8 @@ public class PlayerObject : MonoBehaviour
 
         // spawn new tendril 
         if (timeActive % tendrilSpawnFrequency == 0){
-            SpawnTendril();
+            //SpawnTendril();
+            //Debug.Log("Spawning New Tendril");
         }
         // lose check
 

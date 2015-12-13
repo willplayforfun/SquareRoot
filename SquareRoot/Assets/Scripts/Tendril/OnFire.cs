@@ -17,9 +17,10 @@ public class OnFire : State {
 
     }
 
-    public override void UpdateState() {
-        base.UpdateState();
-        timeInState += Time.deltaTime;
+    public override void UpdateState(float deltaTime) {
+        base.UpdateState(deltaTime);
+
+        timeInState += deltaTime;
         Debug.Log("AAHHHH BURNING " + mOwner.GetPosition());
         if (timeInState > timeUntilFireSpread && timeInState < timeUntilFireOut)
         {

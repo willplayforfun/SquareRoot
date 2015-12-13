@@ -11,16 +11,15 @@ public class TendrilNode : MonoBehaviour
     protected virtual void Awake()
     {
         children = new List<TendrilNode>();
+        mState = new Alive(this);
     }
     protected virtual void Start()
     {
-        mState = new Alive(this);
-        //children = new List<TendrilNode>();
     }
     protected virtual void Update()
     {
         timeActive += Time.deltaTime;
-        mState.UpdateState();
+        mState.UpdateState(Time.deltaTime);
         if (children.Count > 0)
         {
            // Debug.DrawLine(transform.position, parent.GetPosition(), Color.red);
