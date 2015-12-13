@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class SpawnPoint : MonoBehaviour {
+public class SpawnPoint : MonoBehaviour
+{
     public Quaternion rotation
     {
-        get{
-        return transform.rotation;
+        get
+        {
+            return transform.rotation;
         }
     }
     public Vector3 position
@@ -15,8 +16,8 @@ public class SpawnPoint : MonoBehaviour {
             return transform.position;
         }
     }
-    bool inUse = false;
-    TendrilRoot mRoot;
+
+    private TendrilRoot mRoot;
 
     public bool IsInUse()
     {
@@ -31,15 +32,4 @@ public class SpawnPoint : MonoBehaviour {
     {
         mRoot = root;
     }
-
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

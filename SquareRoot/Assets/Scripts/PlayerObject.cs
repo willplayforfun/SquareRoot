@@ -18,16 +18,13 @@ public class PlayerObject : MonoBehaviour
     public float maxCameraSize = 10;
     public float minCameraSize = 3;
 
-    public float timeActive = 0f;
-    double tendrilSpawnFrequency = 20.0f; // how often new tendrils are created
+    private float timeActive = 0f;
 
-    List<SpawnPoint> mSpawnPoints;
-    public void SetSpawnPoints(List<SpawnPoint> sp)
-    {
-        mSpawnPoints = sp;
-    }
-    //Removed for testing:
-    //public List<GameObject> mSpawnPointMarkers; // Contains objects with a SpawnPoint script attached, for use with editor. mSpawnPoints is populated in Start();
+    // how often new tendrils are created
+    public float tendrilSpawnPeriod = 12.0f;
+    private float lastTendrilSpawn;
+
+    SpawnPoint[] mSpawnPoints;
 
     // InControl device used for input
     InputDevice inputDevice;
@@ -85,7 +82,7 @@ public class PlayerObject : MonoBehaviour
     public TendrilRoot tendrilPrefab;
 
     // all present tendrils, alive or dead (until they decompose)
-    List<TendrilRoot> roots;
+    TendrilRoot[] roots;
     // index in roots list of current player-controlled root
     int activeRootIndex;
     private TendrilRoot activeRoot
@@ -99,11 +96,8 @@ public class PlayerObject : MonoBehaviour
     void Awake()
     {
         playerCamera = GetComponentInChildren<Camera>();
-        //gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
+        gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
 
-        //mSpawnPoints = new List<SpawnPoint>();
-
-        roots = new List<TendrilRoot>();
         activeRootIndex = -1;
 
         alive_ = true;
@@ -111,18 +105,21 @@ public class PlayerObject : MonoBehaviour
 
     void Start()
     {
-        /*foreach (GameObject obj in mSpawnPointMarkers)
+        foreach (SpawnZone spawn in FindObjectsOfType<SpawnZone>())
         {
-            if (obj.GetComponent<SpawnPoint>())
+            if (spawn.playerNumber == number)
             {
-                mSpawnPoints.Add(obj.GetComponent<SpawnPoint>());
+                mSpawnPoints = spawn.spawnPoints;
             }
-        }*/
-        if (mSpawnPoints != null)
+        }
+
+        roots = new TendrilRoot[mSpawnPoints.Length];
+
+        if (mSpawnPoints != null && mSpawnPoints.Length > 0)
         {
             SpawnTendril();
         }
-        if (mSpawnPoints == null || mSpawnPoints.Count == 0)
+        else
         {
             Debug.Log("No Spawnpoints available to " + number );
         }
@@ -130,6 +127,9 @@ public class PlayerObject : MonoBehaviour
 
     public void SpawnTendril()
     {
+        lastTendrilSpawn = Time.time;
+
+        int index = 0;
         foreach (SpawnPoint sp in mSpawnPoints)
         {
             if (!sp.IsInUse())
@@ -138,24 +138,22 @@ public class PlayerObject : MonoBehaviour
                 newRoot.transform.position = sp.position;
                 newRoot.transform.rotation = sp.rotation;
                 sp.AttachRoot(newRoot);
-                roots.Add(newRoot);
+                roots[index] = newRoot;
                 if (activeRootIndex < 0)
                 {
-                    activeRootIndex = roots.Count - 1;
-                    playerCamera.transform.position = new Vector3(newRoot.activeTip.transform.position.x, newRoot.activeTip.transform.position.y, playerCamera.transform.position.z);
-                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform);
+                    activeRootIndex = index;
+                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform, maintainOffset:false);
                 }
                 break;
             }
+            index += 1;
         }
+    }
 
-        //Old Code:
-        //TendrilRoot newRoot = Instantiate(tendrilPrefab);
-        //roots.Add(newRoot);
-        //if(activeRootIndex < 0)
-        //{
-        //    activeRootIndex = roots.Count - 1;
-        //}
+    private void GoToTendril(int delta)
+    {
+        activeRootIndex = Mathf.FloorToInt(Mathf.Repeat(activeRootIndex + delta, roots.Length - 1));
+        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].activeTip.transform, maintainOffset: false);
     }
 
     void Update()
@@ -165,9 +163,10 @@ public class PlayerObject : MonoBehaviour
         resourceCount += 2f * Time.deltaTime;
 
         // spawn new tendril 
-        if (timeActive % tendrilSpawnFrequency == 0){
-            //SpawnTendril();
-            //Debug.Log("Spawning New Tendril");
+        if (Time.time - lastTendrilSpawn > tendrilSpawnPeriod)
+        {
+            Debug.Log("Spawning New Tendril");
+            SpawnTendril();
         }
         // lose check
 
@@ -209,6 +208,18 @@ public class PlayerObject : MonoBehaviour
                     Debug.Log(number.ToString() + " player accelerating growth.");
                     activeRoot.AccelerateGrowth();
                 }
+            }
+
+            float deltaX = inputDevice.LeftStick.X;
+            if(deltaX > 0.2f)
+            {
+                // go to right tendril
+                GoToTendril(1);
+            }
+            if (deltaX < -0.2f)
+            {
+                // go to left tendril
+                GoToTendril(-1);
             }
 
             // pause
