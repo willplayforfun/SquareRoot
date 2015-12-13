@@ -21,8 +21,13 @@ public class PlayerObject : MonoBehaviour
     public float timeActive = 0f;
     double tendrilSpawnFrequency = 20.0f; // how often new tendrils are created
 
-    public Transform[] rootBases;
-    
+    List<SpawnPoint> mSpawnPoints;
+    public void SetSpawnPoints(List<SpawnPoint> sp)
+    {
+        mSpawnPoints = sp;
+    }
+    //Removed for testing:
+    //public List<GameObject> mSpawnPointMarkers; // Contains objects with a SpawnPoint script attached, for use with editor. mSpawnPoints is populated in Start();
 
     // InControl device used for input
     InputDevice inputDevice;
@@ -94,7 +99,9 @@ public class PlayerObject : MonoBehaviour
     void Awake()
     {
         playerCamera = GetComponentInChildren<Camera>();
-        gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
+        //gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
+
+        //mSpawnPoints = new List<SpawnPoint>();
 
         roots = new List<TendrilRoot>();
         activeRootIndex = -1;
@@ -104,31 +111,58 @@ public class PlayerObject : MonoBehaviour
 
     void Start()
     {
-        SpawnTendril();
+        /*foreach (GameObject obj in mSpawnPointMarkers)
+        {
+            if (obj.GetComponent<SpawnPoint>())
+            {
+                mSpawnPoints.Add(obj.GetComponent<SpawnPoint>());
+            }
+        }*/
+        if (mSpawnPoints != null)
+        {
+            SpawnTendril();
+        }
+        if (mSpawnPoints == null || mSpawnPoints.Count == 0)
+        {
+            Debug.Log("No Spawnpoints available to " + number );
+        }
     }
 
     public void SpawnTendril()
     {
-        TendrilRoot newRoot = Instantiate(tendrilPrefab);
-        roots.Add(newRoot);
-
-        if(activeRootIndex < 0)
-        {
-            activeRootIndex = roots.Count - 1;
+        foreach (SpawnPoint sp in mSpawnPoints){
+            if (!sp.IsInUse()){
+                TendrilRoot newRoot = Instantiate(tendrilPrefab);
+                newRoot.transform.position = sp.position;
+                newRoot.transform.rotation = sp.rotation;
+                sp.AttachRoot(newRoot);
+                roots.Add(newRoot);
+                if (activeRootIndex < 0)
+                {
+                    activeRootIndex = roots.Count - 1;
+                }
+                break;
+            }
         }
+
+        //Old Code:
+        //TendrilRoot newRoot = Instantiate(tendrilPrefab);
+        //roots.Add(newRoot);
+        //if(activeRootIndex < 0)
+        //{
+        //    activeRootIndex = roots.Count - 1;
+        //}
     }
 
     void Update()
     {
+        timeActive += Time.deltaTime;
         // resource test
         resourceCount += 2f * Time.deltaTime;
 
         // spawn new tendril 
         if (timeActive % tendrilSpawnFrequency == 0){
-            Debug.Log("Spawning New Tendril");
-            /*TendrilRoot newRoot = Instantiate(tendrilPrefab);
-            roots.Add(newRoot);
-            roots[activeRootIndex].activeTip.growDirection = Vector2.left;*/
+            SpawnTendril();
         }
         // lose check
 
