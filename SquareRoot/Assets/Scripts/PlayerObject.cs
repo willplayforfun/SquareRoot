@@ -127,7 +127,7 @@ public class PlayerObject : MonoBehaviour
 
         // spawn new tendril 
         if (timeActive % tendrilSpawnFrequency == 0){
-            Debug.Log("Spawning New Tendril");
+            //Debug.Log("Spawning New Tendril");
             /*TendrilRoot newRoot = Instantiate(tendrilPrefab);
             roots.Add(newRoot);
             roots[activeRootIndex].activeTip.growDirection = Vector2.left;*/

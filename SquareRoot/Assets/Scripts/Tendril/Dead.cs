@@ -15,23 +15,17 @@ public class Dead : State {
     {
 
     }
-
-	// Use this for initialization
-	void Start () {
 	
-	}
-	
-	// Update is called once per frame in mOwner
-	public override void UpdateState () {
-        base.UpdateState();
+	public override void UpdateState (float deltaTime) {
+        base.UpdateState(deltaTime);
         if (timeInState > timeUntilDecompose)
         {
             /*Todo*/
             foreach (TendrilNode t in mOwner.GetChildren())
             {
-                t.mState = new Dead(t);
+                //t.mState = new Dead(t);
             }
-            GameObject.Destroy(mOwner);
+            //GameObject.Destroy(mOwner);
         }
 	}
 }

@@ -47,6 +47,8 @@ public class BranchHUD : MonoBehaviour
     {
         dirRenderer.SetVertexCount(2);
         dirRenderer.SetPosition(0, Vector3.zero);
-        dirRenderer.SetPosition(1, dir * radius);
+        dirRenderer.SetPosition(1, transform.InverseTransformDirection(dir) * radius);
+
+        //dirRenderer.material.mainTextureScale = new Vector2(dir.magnitude * radius, 1);
     }
 }
