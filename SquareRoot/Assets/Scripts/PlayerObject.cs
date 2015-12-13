@@ -199,6 +199,7 @@ public class PlayerObject : MonoBehaviour
                 if (inputDevice.Action2.WasPressed)
                 {
                     Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
+                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(activeRoot.transform, maintainOffset: false);
                     activeRoot.CutTendril();
                 }
 

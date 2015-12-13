@@ -8,34 +8,47 @@ public class OnFire : State {
      * Fire begins to spread in timeUntilFireSpread seconds
      * Node's state becomes "Dead" in timeUntilFireOut seconds from fire's start
      */
-    static double timeUntilFireSpread = 3.0f;
-    static double timeUntilFireOut = 10.0f;
+    static float timeUntilFireSpread = 1.0f;
+    static float timeUntilFireOut = 6.0f;
+
+    private bool haveSpreadFire;
 
     public OnFire(TendrilNode obj)
-        : base(obj)
+           : base(obj)
     {
 
     }
 
-    public override void UpdateState(float deltaTime) {
+    public override void OnStateEnter()
+    {
+        base.OnStateEnter();
+
+        owner.GetComponent<MeshRenderer>().material.color = Color.red;
+    }
+    public override void UpdateState(float deltaTime)
+    {
         base.UpdateState(deltaTime);
 
-        timeInState += deltaTime;
-        Debug.Log("AAHHHH BURNING " + mOwner.GetPosition());
-        if (timeInState > timeUntilFireSpread && timeInState < timeUntilFireOut)
+        //Debug.Log("AAHHHH BURNING " + owner.GetPosition());
+
+        // spread fire once after a time
+        if (timeInState > timeUntilFireSpread && !haveSpreadFire)
         {
-            foreach (TendrilNode neighbor in mOwner.GetNeighbors())
+            haveSpreadFire = true;
+
+            // spread to all neighbors, up or down
+            foreach (TendrilNode neighbor in owner.GetNeighbors())
             {
-                if (neighbor.mState.GetType() == typeof(Alive)) // if it's dead or burning, won't catch fire again
-                {
-                    neighbor.mState = new OnFire(neighbor);
-                    Debug.Log("Fire Spreading to " + neighbor.GetPosition());
-                }
+                // if it's dead or burning, won't catch fire again
+                neighbor.CatchFire();
+                Debug.Log("Fire Spreading to " + neighbor.GetPosition());
             }
         }
+
+        // stop burning
         if (timeInState > timeUntilFireOut)
         {
-            mOwner.mState = new Dead(mOwner);
+            owner.Die();
         }
     }
 }

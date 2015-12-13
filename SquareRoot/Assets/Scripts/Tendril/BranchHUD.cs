@@ -45,10 +45,13 @@ public class BranchHUD : MonoBehaviour
     }
     public void SetAngle(Vector2 dir)
     {
-        dirRenderer.SetVertexCount(2);
-        dirRenderer.SetPosition(0, Vector3.zero);
-        dirRenderer.SetPosition(1, transform.InverseTransformDirection(dir) * radius);
+        if(dirRenderer != null)
+        {
+            dirRenderer.SetVertexCount(2);
+            dirRenderer.SetPosition(0, Vector3.zero);
+            dirRenderer.SetPosition(1, transform.InverseTransformDirection(dir) * radius);
 
-        //dirRenderer.material.mainTextureScale = new Vector2(dir.magnitude * radius, 1);
+            //dirRenderer.material.mainTextureScale = new Vector2(dir.magnitude * radius, 1);
+        }
     }
 }
