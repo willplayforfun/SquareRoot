@@ -137,4 +137,9 @@ public class TendrilNode : MonoBehaviour
     {
         return children;
     }
+
+    public virtual void AddResources(float amount)
+    {
+        parent.AddResources(amount);
+    }
 }

@@ -110,13 +110,14 @@ public class PlayerObject : MonoBehaviour
     public void SpawnTendril()
     {
         TendrilRoot newRoot = Instantiate(tendrilPrefab);
+        newRoot.player = this;
         roots.Add(newRoot);
 
         if(activeRootIndex < 0)
         {
             activeRootIndex = roots.Count - 1;
-            playerCamera.transform.position = new Vector3(newRoot.activeTip.transform.position.x, newRoot.activeTip.transform.position.y, playerCamera.transform.position.z);
-            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform);
+            //playerCamera.transform.position = new Vector3(newRoot.activeTip.transform.position.x, newRoot.activeTip.transform.position.y, playerCamera.transform.position.z);
+            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform, maintainOffset: false);
         }
     }
 
@@ -162,6 +163,7 @@ public class PlayerObject : MonoBehaviour
                 if (inputDevice.Action2.WasPressed)
                 {
                     Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
+                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(activeRoot.transform, maintainOffset: false);
                     activeRoot.CutTendril();
                 }
 

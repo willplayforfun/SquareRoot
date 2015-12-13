@@ -36,12 +36,20 @@ public class FollowingCamera : MonoBehaviour
         }
     }
 
-    public void SetTrackingTarget(Transform target)
+    public void SetTrackingTarget(Transform target, bool maintainOffset = true)
     {
         trackingTransform = target;
-        if(target != null)
+
+        if(!maintainOffset)
         {
-            constantOffset = this.transform.position - trackingTransform.position;
+            constantOffset = Vector3.forward * (this.transform.position - trackingTransform.position).z;
+        }
+        else
+        {
+            if (target != null)
+            {
+                constantOffset = this.transform.position - trackingTransform.position;
+            }
         }
     }
 

@@ -118,14 +118,14 @@ public class TendrilTip : TendrilNode
                 case Layers.Fire:
                     if (typeof(OnFire) != mState.GetType())
                     {
-                        Debug.Log("hit fire");
-                        SetState(new OnFire(this));
+                        CatchFire();
                     }
                     break;
                 case Layers.Resources:
-
+                    SetState(new Leeching(this, collision.gameObject));
                     break;
                 case Layers.Rock:
+                    SetState(new Alive(this));
                     break;
                 case Layers.Tendril:
                     TendrilNode node = collision.gameObject.GetComponent<TendrilNode>();

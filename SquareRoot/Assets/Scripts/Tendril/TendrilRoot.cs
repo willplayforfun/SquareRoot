@@ -4,6 +4,7 @@ using System.Collections;
 public class TendrilRoot : TendrilNode
 {
     public TendrilTip activeTip;
+    public PlayerObject player;
 
     protected override void Start()
     {
@@ -12,6 +13,11 @@ public class TendrilRoot : TendrilNode
         activeTip.growDirection = transform.up;
         activeTip.SetParent(this);
         AddChild(activeTip);
+    }
+
+    public override void AddResources(float amount)
+    {
+        player.AddResources(amount);
     }
 
     // input functions (called into by PlayerObject)
@@ -30,6 +36,6 @@ public class TendrilRoot : TendrilNode
 
     public void CutTendril()
     {
-        TreeDie();
+        Die();
     }
 }
