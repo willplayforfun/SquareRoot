@@ -30,6 +30,6 @@ public class TendrilRoot : TendrilNode
 
     public void CutTendril()
     {
-
+        TreeDie();
     }
 }

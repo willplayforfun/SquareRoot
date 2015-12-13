@@ -1,37 +1,100 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class TendrilNode : MonoBehaviour
 {
+    protected State mState;
+    protected Type state
+    {
+        get
+        {
+            return mState.GetType();
+        }
+    }
+
+    protected void SetState(State newState)
+    {
+        if(mState != null)
+        {
+            mState.OnStateExit();
+        }
+        mState = newState;
+        newState.OnStateEnter();
+    }
+
+    public bool IsAlive()
+    {
+        return state == typeof(Alive) || state == typeof(Growing);
+    }
+    public bool IsOnFire()
+    {
+        return state == typeof(OnFire);
+    }
+    public void CatchFire()
+    {
+        // if it's dead or burning, won't catch fire again
+        if(this.IsAlive())
+        {
+            SetState(new OnFire(this));
+        }
+    }
+    public void Die()
+    {
+        SetState(new Dead(this));
+    }
+    public void TreeDie()
+    {
+        Die();
+        foreach (TendrilNode t in GetChildren())
+        {
+            t.TreeDie();
+        }
+    }
+
     protected TendrilNode parent;
     protected List<TendrilNode> children;
-    public State mState;
-    protected float timeActive = 0;
+
+    protected float creationTime;
 
     protected virtual void Awake()
     {
         children = new List<TendrilNode>();
-        mState = new Alive(this);
+        SetState(new Alive(this));
     }
     protected virtual void Start()
     {
+        creationTime = Time.time;
     }
     protected virtual void Update()
     {
-        timeActive += Time.deltaTime;
         mState.UpdateState(Time.deltaTime);
+        
+        //DEBUG
         if (children.Count > 0)
         {
-           // Debug.DrawLine(transform.position, parent.GetPosition(), Color.red);
-            foreach (TendrilNode t in children){
+            foreach (TendrilNode t in children)
+            {
                 Debug.DrawLine(transform.position, t.GetPosition(), Color.blue);
             }
-            if (parent)
+            if (parent != null)
             {
                 Debug.DrawLine(transform.position, parent.GetPosition(), Color.red);
             }
-            //Debug.Log("drew line"); 
         }
+    }
+
+    public void SafeDestroy()
+    {
+        foreach(TendrilNode child in children)
+        {
+            child.SetParent(null);
+        }
+        if(parent != null)
+        {
+            parent.RemoveChild(this);
+        }
+        Destroy(this.gameObject);
     }
 
     // input functions (called down through tree from TendrilRoot)

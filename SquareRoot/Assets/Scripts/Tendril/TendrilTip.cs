@@ -28,20 +28,15 @@ public class TendrilTip : TendrilNode
     public float nodeDropRate = 1;
     //speed of the tip
     public float growthRate = 2.0f;
-    
-    public float timeSinceNodeDropped;
 
     protected override void Awake()
     {
         base.Awake();
-        mState = new Growing(this);
+        SetState(new Growing(this));
     }
-
     protected override void Start()
     {
         base.Start();
-
-        GetComponent<BoxCollider2D>().enabled = false;
 
         if (hud != null)
         {
@@ -49,7 +44,6 @@ public class TendrilTip : TendrilNode
             hud.minAngle = minBranchAngle;
         }
     }
-
     protected override void Update()
     {
         base.Update();
@@ -57,31 +51,31 @@ public class TendrilTip : TendrilNode
 
     void CreateNewBranch(Vector2 newDirection)
     {
-        /*TODO*/
-        TendrilNode parentNode;
-        if (timeSinceNodeDropped > 0.5f * 1f / nodeDropRate)
+        if(state == typeof(Growing))
         {
-            parentNode = CreateNewNode();
-        }
-        else
-        {
-            parentNode = parent;
-        }
+            TendrilNode parentNode;
+            if (Vector3.Distance(transform.position, parent.transform.position) > 0.5f * growthRate / nodeDropRate)
+            {
+                parentNode = CreateNewNode();
+            }
+            else
+            {
+                parentNode = parent;
+            }
 
-        TendrilTip newtip = Instantiate(tipPrefab);
-        //newtip.transform.SetParent(parentNode.transform);
-        newtip.transform.position = transform.position + 0.4f * transform.up;
-        newtip.SetParent(parentNode);
-        newtip.tendrilRoot = tendrilRoot;
-        newtip.growDirection = direction;
+            TendrilTip newtip = Instantiate(tipPrefab);
+            //newtip.transform.SetParent(parentNode.transform);
+            newtip.transform.position = transform.position + 0.4f * transform.up;
+            newtip.SetParent(parentNode);
+            newtip.tendrilRoot = tendrilRoot;
+            newtip.growDirection = direction;
 
-        growDirection = newDirection;
+            growDirection = newDirection;
+        }
     }
+
     public TendrilNode CreateNewNode()
     {
-        timeSinceNodeDropped = 0;
-        GetComponent<BoxCollider2D>().enabled = true;
-
         // TODO: proper tip spawning, not debug cube
 
         // spawn new node object and setup position/rotation
@@ -117,27 +111,37 @@ public class TendrilTip : TendrilNode
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        switch(collision.gameObject.layer)
+        if(state == typeof(Growing))
         {
-            case Layers.Fire:
-                if (typeof(OnFire) != mState.GetType())
-                {
-                    Debug.Log("hit fire");
-                    mState = new OnFire(this);
-                }
-                break;
-            case Layers.Resources:
-                break;
-            case Layers.Rock:
-                break;
-            case Layers.Tendril:
-                TendrilNode node = collision.gameObject.GetComponent<TendrilNode>();
-                if (node != null && node != parent)
-                {
-                    //Debug.Log("hit tendril");
-                    mState = new Dead(this);
-                }
-                break;
+            switch (collision.gameObject.layer)
+            {
+                case Layers.Fire:
+                    if (typeof(OnFire) != mState.GetType())
+                    {
+                        Debug.Log("hit fire");
+                        SetState(new OnFire(this));
+                    }
+                    break;
+                case Layers.Resources:
+
+                    break;
+                case Layers.Rock:
+                    break;
+                case Layers.Tendril:
+                    TendrilNode node = collision.gameObject.GetComponent<TendrilNode>();
+                    if (node != null && node != parent)
+                    {
+                        if(node.IsOnFire())
+                        {
+                            CatchFire();
+                        }
+                        else
+                        {
+                            SetState(new Alive(this));
+                        }
+                    }
+                    break;
+            }
         }
     }
 
@@ -156,18 +160,24 @@ public class TendrilTip : TendrilNode
     // input functions (called into by TendrilRoot)
     public void StartBranch()
     {
-        // show UI
-        hud.Show();
+        if (state == typeof(Growing))
+        {
+            // show UI
+            hud.Show();
+        }
     }
     public void EndBranch()
     {
-        // hide UI
-        hud.Hide();
-
-        // branch off
-        if (ValidateBranchDirection(currentBranchAim))
+        if (state == typeof(Growing))
         {
-            CreateNewBranch(currentBranchAim.normalized);
+            // hide UI
+            hud.Hide();
+
+            // branch off
+            if (ValidateBranchDirection(currentBranchAim))
+            {
+                CreateNewBranch(currentBranchAim.normalized);
+            }
         }
     }
     public void BranchAim(Vector2 input)

@@ -3,15 +3,35 @@ using System.Collections;
 
 public class State {
 
-    protected TendrilNode mOwner;
-    protected float timeInState = 0;
-    public State(TendrilNode obj)
+    protected TendrilNode owner;
+    protected float creationTime;
+
+    protected float timeInState
     {
-        mOwner = obj;
+        get
+        {
+            return Time.time - creationTime;
+        }
     }
 
-    public virtual void UpdateState(float deltaTime) // Gets called every frame by the owner node
+    public State(TendrilNode obj)
     {
-        timeInState += Time.deltaTime;
+        owner = obj;
+    }
+
+    public virtual void OnStateEnter()
+    {
+        creationTime = Time.time;
+    }
+
+    // Gets called every frame by the owner node
+    public virtual void UpdateState(float deltaTime) 
+    {
+
+    }
+
+    public virtual void OnStateExit()
+    {
+
     }
 }
