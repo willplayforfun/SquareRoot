@@ -109,6 +109,8 @@ public class PlayerObject : MonoBehaviour
         if(activeRootIndex < 0)
         {
             activeRootIndex = roots.Count - 1;
+            playerCamera.transform.position = new Vector3(newRoot.activeTip.transform.position.x, newRoot.activeTip.transform.position.y, playerCamera.transform.position.z);
+            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform);
         }
     }
 

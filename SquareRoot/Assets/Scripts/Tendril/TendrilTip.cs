@@ -27,6 +27,14 @@ public class TendrilTip : TendrilNode
     
     private float timeSinceNodeDropped;
 
+    protected override void Start()
+    {
+        base.Start();
+
+        hud.maxAngle = maxBranchAngle;
+        hud.minAngle = minBranchAngle;
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -42,17 +50,19 @@ public class TendrilTip : TendrilNode
             CreateNewNode();
         }
     }
-    void CreateNewBranch(Vector2 direction)
+    void CreateNewBranch(Vector2 newDirection)
     {
         /*TODO*/
-        
+        direction = newDirection;
     }
     void CreateNewNode()
     {
         // TODO: proper tip spawning, not debug cube
         GameObject newNode = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newNode.transform.localScale *= 0.5f;
+        newNode.transform.SetParent(parent.transform);
+        //newNode.transform.localScale *= 0.5f;
         newNode.transform.position = transform.position;
+        newNode.transform.rotation = Quaternion.LookRotation(Vector3.back, parent.transform.position - transform.position);
 
         TendrilNode newNodeComponent = newNode.AddComponent<TendrilNode>();
         newNodeComponent.AddChild(this);    //new node children set
@@ -95,25 +105,38 @@ public class TendrilTip : TendrilNode
 
     }
 
+    public float minBranchAngle = 10;
+    public float maxBranchAngle = 170;
+
+    public BranchHUD hud;
     private Vector2 currentBranchAim;
 
     // input functions (called into by TendrilRoot)
     public void StartBranch()
     {
         // show UI
-
+        hud.Show();
     }
     public void EndBranch()
     {
         // hide UI
-
+        hud.Hide();
 
         // branch off
-        CreateNewBranch(currentBranchAim);
+        if (ValidateBranchDirection(currentBranchAim))
+        {
+            CreateNewBranch(currentBranchAim.normalized);
+        }
     }
     public void BranchAim(Vector2 input)
     {
         // TODO angle snapping
+
         currentBranchAim = input;
+        hud.SetAngle(currentBranchAim);
+    }
+    public bool ValidateBranchDirection(Vector2 dir)
+    {
+        return currentBranchAim.magnitude > 0.3f;
     }
 }
