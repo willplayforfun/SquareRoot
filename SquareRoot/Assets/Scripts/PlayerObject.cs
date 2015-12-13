@@ -18,6 +18,12 @@ public class PlayerObject : MonoBehaviour
     public float maxCameraSize = 10;
     public float minCameraSize = 3;
 
+    public float timeActive = 0f;
+    double tendrilSpawnFrequency = 20.0f; // how often new tendrils are created
+
+    public Transform[] rootBases;
+    
+
     // InControl device used for input
     InputDevice inputDevice;
 
@@ -117,6 +123,13 @@ public class PlayerObject : MonoBehaviour
         // resource test
         resourceCount += 2f * Time.deltaTime;
 
+        // spawn new tendril 
+        if (timeActive % tendrilSpawnFrequency == 0){
+            Debug.Log("Spawning New Tendril");
+            /*TendrilRoot newRoot = Instantiate(tendrilPrefab);
+            roots.Add(newRoot);
+            roots[activeRootIndex].activeTip.growDirection = Vector2.left;*/
+        }
         // lose check
 
         if (resourceCount < gameController.requiredResources)

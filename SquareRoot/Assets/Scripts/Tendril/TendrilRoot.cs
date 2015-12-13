@@ -8,8 +8,10 @@ public class TendrilRoot : TendrilNode
     protected override void Start()
     {
         base.Start();
-
+        
         activeTip.growDirection = transform.up;
+        activeTip.SetParent(this);
+        AddChild(activeTip);
     }
 
     // input functions (called into by PlayerObject)
