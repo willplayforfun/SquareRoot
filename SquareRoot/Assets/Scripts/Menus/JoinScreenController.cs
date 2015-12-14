@@ -114,6 +114,13 @@ public class JoinScreenController : MonoBehaviour
                 {
                     RemovePlayer(player);
                 }
+                else //if(players.Count == 0)
+                {
+                    Debug.Log("Going to main menu");
+		            InputManager.OnDeviceDetached -= OnDeviceDetached;
+                    Destroy(gameObject);
+                    Application.LoadLevel(Levels.MainMenu);
+                }
             }
         }
     }
