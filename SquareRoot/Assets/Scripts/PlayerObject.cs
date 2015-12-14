@@ -98,7 +98,7 @@ public class PlayerObject : MonoBehaviour
         playerCamera = GetComponentInChildren<Camera>();
         gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
 
-        activeRootIndex = -1;
+        FocusOnPlayer();
 
         alive_ = true;
     }
@@ -109,6 +109,8 @@ public class PlayerObject : MonoBehaviour
         {
             if (spawn.playerNumber == number)
             {
+                currentTendrilIndicator.rotation = spawn.transform.rotation;
+                transform.position = spawn.transform.position;
                 mSpawnPoints = spawn.spawnPoints;
             }
         }
@@ -135,14 +137,19 @@ public class PlayerObject : MonoBehaviour
             if (!sp.IsInUse())
             {
                 TendrilRoot newRoot = Instantiate(tendrilPrefab);
+                newRoot.player = this;
                 newRoot.transform.position = sp.position;
                 newRoot.transform.rotation = sp.rotation;
                 sp.AttachRoot(newRoot);
                 roots[index] = newRoot;
-                if (activeRootIndex < 0)
+
+                // if focused on player
+                if (currentFocus == FocusState.Player)
                 {
-                    activeRootIndex = index;
-                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(newRoot.activeTip.transform, maintainOffset:false);
+                    // focus on new tendril
+                    activeRootIndex = -1;
+                    GoToNextRightTendril();
+                    FocusOnTip();
                 }
                 break;
             }
@@ -150,12 +157,109 @@ public class PlayerObject : MonoBehaviour
         }
     }
 
-    private void GoToTendril(int delta)
+    public Transform currentTendrilIndicator;
+
+    private enum FocusState
     {
-        activeRootIndex = Mathf.FloorToInt(Mathf.Repeat(activeRootIndex + delta, roots.Length - 1));
-        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].activeTip.transform, maintainOffset: false);
+        Tip,
+        Root,
+        Player
+    }
+    private FocusState currentFocus;
+
+    private void FocusOnTip()
+    {
+        bool goAhead = true;
+
+        if(!roots[activeRootIndex].activeTip.IsAlive())
+        {
+            if(roots[activeRootIndex].IsAlive())
+            {
+                goAhead = false;
+                FocusOnRoot();
+            }
+            else
+            {
+                goAhead = GoToAnyTendril();
+            }
+        }
+
+        if(goAhead)
+        {
+            currentFocus = FocusState.Tip;
+            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].activeTip.transform, maintainOffset: false);
+        }
     }
 
+    private void FocusOnRoot()
+    {
+        currentFocus = FocusState.Root;
+        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
+    }
+
+    private void FocusOnPlayer()
+    {
+        currentFocus = FocusState.Player;
+        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(this.transform, maintainOffset: false);
+
+        currentTendrilIndicator.gameObject.SetActive(false);
+    }
+
+    private bool GoToAnyTendril()
+    {
+        if (!GoToNextRightTendril())
+        {
+            if (!GoToNextLeftTendril())
+            {
+                FocusOnPlayer();
+                return false;
+            }
+            else
+            {
+                FocusOnTip();
+                return true;
+            }
+        }
+        else
+        {
+            FocusOnTip();
+            return true;
+        }
+    }
+
+    private bool GoToNextRightTendril()
+    {
+        for (int i = Mathf.Clamp(activeRootIndex + 1, 0, roots.Length - 1); i < roots.Length; i++)
+        {
+            if (roots[i] != null && roots[i].IsAlive())
+            {
+                currentTendrilIndicator.gameObject.SetActive(true);
+                currentTendrilIndicator.position = roots[i].transform.position - roots[i].transform.up;
+
+                activeRootIndex = i;
+                FocusOnRoot();
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool GoToNextLeftTendril()
+    {
+        for (int i = Mathf.Clamp(activeRootIndex - 1, 0, roots.Length - 1); i >= 0; i--)
+        {
+            if (roots[i] != null && roots[i].IsAlive())
+            {
+                currentTendrilIndicator.gameObject.SetActive(true);
+                currentTendrilIndicator.position = roots[i].transform.position - roots[i].transform.up;
+
+                activeRootIndex = i;
+                FocusOnRoot();
+                return true;
+            }
+        }
+        return false;
+    }
+    
     void Update()
     {
         timeActive += Time.deltaTime;
@@ -168,8 +272,8 @@ public class PlayerObject : MonoBehaviour
             Debug.Log("Spawning New Tendril");
             SpawnTendril();
         }
-        // lose check
 
+        // lose check
         if (resourceCount < gameController.requiredResources)
         {
             alive_ = false;
@@ -179,7 +283,7 @@ public class PlayerObject : MonoBehaviour
 
         if (alive && inputDevice != null)
         {
-            if (activeRootIndex >= 0)
+            if (activeRootIndex >= 0 && activeRoot != null)
             {
                 // branching
                 if (inputDevice.Action1.WasPressed)
@@ -198,8 +302,9 @@ public class PlayerObject : MonoBehaviour
                 if (inputDevice.Action2.WasPressed)
                 {
                     Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
-                    playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(activeRoot.transform, maintainOffset: false);
                     activeRoot.CutTendril();
+
+                    GoToAnyTendril();
                 }
 
                 // accelerate growth
@@ -210,16 +315,28 @@ public class PlayerObject : MonoBehaviour
                 }
             }
 
-            float deltaX = inputDevice.LeftStick.X;
-            if(deltaX > 0.2f)
+            if (inputDevice.Action3.WasPressed)
             {
-                // go to right tendril
-                GoToTendril(1);
+                // focus on root
+                FocusOnRoot();
             }
-            if (deltaX < -0.2f)
+            if (inputDevice.Action3.IsPressed)
             {
-                // go to left tendril
-                GoToTendril(-1);
+                if (inputDevice.LeftStickRight.WasPressed)
+                {
+                    // go to next right tendril
+                    GoToNextRightTendril();
+                }
+                if (inputDevice.LeftStickLeft.WasPressed)
+                {
+                    // go to next left tendril
+                    GoToNextLeftTendril();
+                }
+            }
+            if (inputDevice.Action3.WasReleased)
+            {
+                // focus on tip
+                FocusOnTip();
             }
 
             // pause

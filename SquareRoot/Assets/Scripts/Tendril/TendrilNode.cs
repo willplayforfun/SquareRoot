@@ -25,7 +25,7 @@ public class TendrilNode : MonoBehaviour
 
     public bool IsAlive()
     {
-        return state == typeof(Alive) || state == typeof(Growing);
+        return state == typeof(Alive) || state == typeof(Growing) || state == typeof(Leeching);
     }
     public bool IsOnFire()
     {
@@ -109,8 +109,11 @@ public class TendrilNode : MonoBehaviour
     public List<TendrilNode> GetNeighbors()
     {
         List<TendrilNode> neighbors = new List<TendrilNode>();
-        neighbors.Add(parent);
-        foreach(TendrilNode child in children){
+        if(parent != null)
+        {
+            neighbors.Add(parent);
+        }
+        foreach (TendrilNode child in children){
             neighbors.Add(child);
         }
         return neighbors;
