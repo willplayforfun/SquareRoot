@@ -42,7 +42,10 @@ public class FollowingCamera : MonoBehaviour
 
         if(!maintainOffset)
         {
-            constantOffset = Vector3.forward * (this.transform.position - trackingTransform.position).z;
+            if (target != null)
+            {
+                constantOffset = Vector3.forward * (this.transform.position - trackingTransform.position).z;
+            }
         }
         else
         {

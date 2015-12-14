@@ -119,19 +119,22 @@ public class TendrilTip : TendrilNode
                     if (typeof(OnFire) != mState.GetType())
                     {
                         CatchFire();
+                        if (hud != null) hud.Hide();
                     }
                     break;
                 case Layers.Resources:
                     SetState(new Leeching(this, collision.gameObject));
+                    if (hud != null) hud.Hide();
                     break;
                 case Layers.Rock:
                     SetState(new Alive(this));
+                    if(hud != null) hud.Hide();
                     break;
                 case Layers.Tendril:
                     TendrilNode node = collision.gameObject.GetComponent<TendrilNode>();
                     if (node != null && node != parent)
                     {
-                        if(node.IsOnFire())
+                        if (node.IsOnFire())
                         {
                             CatchFire();
                         }
@@ -139,6 +142,7 @@ public class TendrilTip : TendrilNode
                         {
                             SetState(new Alive(this));
                         }
+                        if (hud != null) hud.Hide();
                     }
                     break;
             }

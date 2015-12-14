@@ -31,7 +31,7 @@ public class TendrilNode : MonoBehaviour
     {
         return state == typeof(OnFire);
     }
-    public void CatchFire()
+    public virtual void CatchFire()
     {
         // if it's dead or burning, won't catch fire again
         if(this.IsAlive())

@@ -12,11 +12,20 @@ public enum PlayerNum
 
 public class PlayerObject : MonoBehaviour
 {
+    public void Lose()
+    {
+        alive_ = false;
+        playerCamera.GetComponent<FollowingCamera>().ApplyShock(8);
+        FocusOnMap();
+    }
+
     public static int MaxResources = 100;
 
     public float cameraZoomSpeed = 2f;
     public float maxCameraSize = 10;
     public float minCameraSize = 3;
+
+    private float zoomTarget = 5;
 
     private float timeActive = 0f;
 
@@ -205,6 +214,12 @@ public class PlayerObject : MonoBehaviour
         currentTendrilIndicator.gameObject.SetActive(false);
     }
 
+    private void FocusOnMap()
+    {
+        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(null);
+        playerCamera.transform.position = new Vector3(0, 0, playerCamera.transform.position.z);
+    }
+
     private bool GoToAnyTendril()
     {
         if (!GoToNextRightTendril())
@@ -262,94 +277,99 @@ public class PlayerObject : MonoBehaviour
     
     void Update()
     {
-        timeActive += Time.deltaTime;
-        // resource test
-        resourceCount += 2f * Time.deltaTime;
-
-        // spawn new tendril 
-        if (Time.time - lastTendrilSpawn > tendrilSpawnPeriod)
+        if (alive_)
         {
-            Debug.Log("Spawning New Tendril");
-            SpawnTendril();
-        }
+            timeActive += Time.deltaTime;
+            // resource test
+            resourceCount += 2f * Time.deltaTime;
 
-        // lose check
-        if (resourceCount < gameController.requiredResources)
-        {
-            alive_ = false;
-        }
-
-        // handle input
-
-        if (alive && inputDevice != null)
-        {
-            if (activeRootIndex >= 0 && activeRoot != null)
+            // spawn new tendril 
+            if (Time.time - lastTendrilSpawn > tendrilSpawnPeriod)
             {
-                // branching
-                if (inputDevice.Action1.WasPressed)
-                {
-                    Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
-                    activeRoot.StartBranch();
-                }
-                if (inputDevice.Action1.WasReleased)
-                {
-                    Debug.Log(number.ToString() + " player released Action 1 (branch).");
-                    activeRoot.EndBranch();
-                }
-                activeRoot.BranchAim(inputDevice.LeftStick.Vector);
-
-                // cutting
-                if (inputDevice.Action2.WasPressed)
-                {
-                    Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
-                    activeRoot.CutTendril();
-
-                    GoToAnyTendril();
-                }
-
-                // accelerate growth
-                if (inputDevice.LeftBumper.IsPressed || inputDevice.RightBumper.IsPressed || inputDevice.LeftTrigger.IsPressed || inputDevice.RightTrigger.IsPressed)
-                {
-                    Debug.Log(number.ToString() + " player accelerating growth.");
-                    activeRoot.AccelerateGrowth();
-                }
+                Debug.Log("Spawning New Tendril");
+                SpawnTendril();
             }
 
-            if (inputDevice.Action3.WasPressed)
+            // lose check
+            if (resourceCount < gameController.requiredResources)
             {
-                // focus on root
-                FocusOnRoot();
-            }
-            if (inputDevice.Action3.IsPressed)
-            {
-                if (inputDevice.LeftStickRight.WasPressed)
-                {
-                    // go to next right tendril
-                    GoToNextRightTendril();
-                }
-                if (inputDevice.LeftStickLeft.WasPressed)
-                {
-                    // go to next left tendril
-                    GoToNextLeftTendril();
-                }
-            }
-            if (inputDevice.Action3.WasReleased)
-            {
-                // focus on tip
-                FocusOnTip();
+                alive_ = false;
             }
 
-            // pause
-            if (inputDevice.MenuWasPressed || !inputDevice.IsAttached)
-            {
-                Debug.Log(number.ToString() + " player pressed pause.");
-                gameController.TogglePause();
-            }
+            // handle input
 
-            // camera control
-            float deltaY = inputDevice.RightStick.Y;
-            float originalSize = playerCamera.orthographicSize;
-            playerCamera.orthographicSize = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
+            if (alive && inputDevice != null)
+            {
+                if (activeRootIndex >= 0 && activeRoot != null)
+                {
+                    // branching
+                    if (inputDevice.Action1.WasPressed)
+                    {
+                        Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
+                        activeRoot.StartBranch();
+                    }
+                    if (inputDevice.Action1.WasReleased)
+                    {
+                        Debug.Log(number.ToString() + " player released Action 1 (branch).");
+                        activeRoot.EndBranch();
+                    }
+                    activeRoot.BranchAim(inputDevice.LeftStick.Vector);
+
+                    // cutting
+                    if (inputDevice.Action2.WasPressed)
+                    {
+                        Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
+                        activeRoot.CutTendril();
+
+                        GoToAnyTendril();
+                    }
+
+                    // accelerate growth
+                    if (inputDevice.LeftBumper.IsPressed || inputDevice.RightBumper.IsPressed || inputDevice.LeftTrigger.IsPressed || inputDevice.RightTrigger.IsPressed)
+                    {
+                        Debug.Log(number.ToString() + " player accelerating growth.");
+                        activeRoot.AccelerateGrowth();
+                    }
+                }
+
+                if (inputDevice.Action3.WasPressed)
+                {
+                    // focus on root
+                    FocusOnRoot();
+                }
+                if (inputDevice.Action3.IsPressed)
+                {
+                    if (inputDevice.LeftStickRight.WasPressed)
+                    {
+                        // go to next right tendril
+                        GoToNextRightTendril();
+                    }
+                    if (inputDevice.LeftStickLeft.WasPressed)
+                    {
+                        // go to next left tendril
+                        GoToNextLeftTendril();
+                    }
+                }
+                if (inputDevice.Action3.WasReleased)
+                {
+                    // focus on tip
+                    FocusOnTip();
+                }
+
+                // pause
+                if (inputDevice.MenuWasPressed || !inputDevice.IsAttached)
+                {
+                    Debug.Log(number.ToString() + " player pressed pause.");
+                    gameController.TogglePause();
+                }
+
+                // camera control
+                float deltaY = inputDevice.RightStick.Y;
+                float originalSize = playerCamera.orthographicSize;
+                zoomTarget = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
+
+                playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.4f);
+            }
         }
     }
 

@@ -38,4 +38,10 @@ public class TendrilRoot : TendrilNode
     {
         Die();
     }
+
+    public override void CatchFire()
+    {
+        base.CatchFire();
+        player.Lose();
+    }
 }
