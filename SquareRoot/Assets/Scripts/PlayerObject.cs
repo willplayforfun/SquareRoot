@@ -187,7 +187,7 @@ public class PlayerObject : MonoBehaviour
             }
             else
             {
-                ui.ShowNotification();
+                ui.ShowTendrilNotification();
                 ui.vignetteColor = Color.green;
                 ui.FadeVignetteToColor(new Color(0, 255, 0, 0), 1);
             }
@@ -381,7 +381,8 @@ public class PlayerObject : MonoBehaviour
                         activeRoot.CutTendril();
 
                         GoToAnyTendril();
-                        ui.HideNotification();
+                        ui.HideFireNotification();
+                        ui.HideTendrilNotification();
                     }
 
                     // accelerate growth
@@ -396,21 +397,24 @@ public class PlayerObject : MonoBehaviour
                 {
                     GoToNextLeftTendril();
                     FocusOnTip();
-                    ui.HideNotification();
+                    ui.HideFireNotification();
+                    ui.HideTendrilNotification();
                 }
 
                 if (inputDevice.RightBumper.WasPressed)
                 {
                     GoToNextRightTendril();
                     FocusOnTip();
-                    ui.HideNotification();
+                    ui.HideFireNotification();
+                    ui.HideTendrilNotification();
                 }   
 
                 if ((inputDevice.Action3.WasPressed || inputDevice.LeftTrigger.WasPressed) && currentFocus == FocusState.Tip)
                 {
                     // focus on root
                     FocusOnRoot();
-                    ui.HideNotification();
+                    ui.HideFireNotification();
+                    ui.HideTendrilNotification();
                 }
                 if (inputDevice.Action3.IsPressed || inputDevice.LeftTrigger.IsPressed)
                 {
@@ -481,6 +485,7 @@ public class PlayerObject : MonoBehaviour
     {
         ui.vignetteColor = Color.red;
         ui.FadeVignetteToColor(new Color(255, 0, 0, 0), 1);
+        ui.ShowFireNotification();
     }
 
     // initialization function called by GameController at scene start

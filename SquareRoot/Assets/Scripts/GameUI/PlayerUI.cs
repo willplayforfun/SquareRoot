@@ -54,6 +54,7 @@ public class PlayerUI : MonoBehaviour
     }
 
     public GameObject newTendrilNotification;
+    public GameObject fireNotification;
 
     public float offsetFromEdge = 20;
 
@@ -61,7 +62,8 @@ public class PlayerUI : MonoBehaviour
     {
         gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
 
-        HideNotification();
+        HideTendrilNotification();
+        HideFireNotification();
 
         resourceBar.color = playerColors[(int)player.number];
         //needBar.color = playerColors[(int)player.number];
@@ -73,14 +75,26 @@ public class PlayerUI : MonoBehaviour
         needBar.fillAmount = (float)gameController.requiredResources / (float)PlayerObject.MaxResources;
     }
 
-    public void ShowNotification()
+    public void ShowTendrilNotification()
     {
         newTendrilNotification.SetActive(true);
+        HideFireNotification();
     }
 
-    public void HideNotification()
+    public void HideTendrilNotification()
     {
         newTendrilNotification.SetActive(false);
+    }
+
+    public void ShowFireNotification()
+    {
+        fireNotification.SetActive(true);
+        HideTendrilNotification();
+    }
+
+    public void HideFireNotification()
+    {
+        fireNotification.SetActive(false);
     }
 
     public void SetHUDPosition(PlayerNum num, int numPlayers)
