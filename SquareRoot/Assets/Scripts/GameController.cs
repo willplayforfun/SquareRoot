@@ -52,6 +52,7 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         gameObject.tag = Tags.GameController;
+        Time.timeScale = 1.0f;
     }
 
     void Start()
@@ -134,6 +135,8 @@ public class GameController : MonoBehaviour
             TogglePause(showMenu: false);
         }
 
+        ui.ShowGameOverScreen();
         // TODO scoreboard
+        
     }
 }
