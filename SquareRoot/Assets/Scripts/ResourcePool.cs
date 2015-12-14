@@ -4,10 +4,16 @@ using System.Collections;
 
 public class ResourcePool : MonoBehaviour
 {
-    public float amount;
+    public float maxAmount;
+    private float amount;
     public float feedRate;
     
     public event Action<float> Feed;
+
+    void Start()
+    {
+        amount = maxAmount;
+    }
 
     void Update()
     {
@@ -19,6 +25,7 @@ public class ResourcePool : MonoBehaviour
             float actualAmount = Mathf.Min(amount, desiredAmount);
 
             amount -= actualAmount;
+            GetComponent<MeshRenderer>().material.color = Color.Lerp(Color.black, Color.green, amount / maxAmount);
 
             Feed.Invoke(actualAmount / feeders);
         }

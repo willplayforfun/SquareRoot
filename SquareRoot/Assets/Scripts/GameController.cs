@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
+    public float startBuffer = 10;
     public float resourceRate = 1f;
 
     [Space(12)]
@@ -14,7 +15,7 @@ public class GameController : MonoBehaviour
     List<PlayerObject> players;
 
     private bool paused;
-    public void TogglePause()
+    public void TogglePause(bool showMenu = true)
     {
         if(paused)
         {
@@ -34,7 +35,7 @@ public class GameController : MonoBehaviour
 
             //pause
             Time.timeScale = 0;
-            ui.ShowPauseMenu();
+            if(showMenu) ui.ShowPauseMenu();
         }
     }
 
@@ -44,7 +45,7 @@ public class GameController : MonoBehaviour
     {
         get
         {
-            return Mathf.FloorToInt(resourceRate * (Time.time - matchStart));
+            return Mathf.FloorToInt(resourceRate * (Time.time - matchStart - startBuffer));
         }
     }
 
@@ -109,6 +110,10 @@ public class GameController : MonoBehaviour
                 // win!
                 EndMatch(winner: alivePlayer);
             }
+            else if(alivePlayer == null)
+            {
+                EndMatch();
+            }
         }
     }
 
@@ -120,11 +125,13 @@ public class GameController : MonoBehaviour
         {
             Debug.LogFormat("Match concluded, {0} player was winner", winner.number.ToString());
             ui.SetVictoryText(winner.number);
+            TogglePause(showMenu: false);
         }
         else
         {
             Debug.Log("Match concluded as a draw");
             ui.SetDrawText();
+            TogglePause(showMenu: false);
         }
 
         // TODO scoreboard

@@ -19,11 +19,15 @@ public class PlayerObject : MonoBehaviour
         FocusOnMap();
     }
 
+    public float startingResourceCount = 5;
     public static int MaxResources = 100;
 
     public float cameraZoomSpeed = 2f;
     public float maxCameraSize = 10;
     public float minCameraSize = 3;
+
+    public float mapZoomLevel = 50;
+    public float playerZoomLevel = 30;
 
     private float zoomTarget = 5;
 
@@ -110,6 +114,7 @@ public class PlayerObject : MonoBehaviour
         FocusOnPlayer();
 
         alive_ = true;
+        resourceCount = startingResourceCount;
     }
 
     void Start()
@@ -202,9 +207,16 @@ public class PlayerObject : MonoBehaviour
 
     private void FocusOnRoot()
     {
-        currentFocus = FocusState.Root;
-        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
-        zoomTarget = 15;
+        if (roots[activeRootIndex] != null)
+        {
+            currentFocus = FocusState.Root;
+            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
+            zoomTarget = playerZoomLevel;
+        }
+        else
+        {
+            FocusOnPlayer();
+        }
     }
 
     private void FocusOnPlayer()
@@ -213,14 +225,14 @@ public class PlayerObject : MonoBehaviour
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(this.transform, maintainOffset: false);
 
         currentTendrilIndicator.gameObject.SetActive(false);
-        zoomTarget = 15;
+        zoomTarget = playerZoomLevel;
     }
 
     private void FocusOnMap()
     {
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(null);
         playerCamera.transform.position = new Vector3(0, 0, playerCamera.transform.position.z);
-        zoomTarget = 30;
+        zoomTarget = mapZoomLevel;
     }
 
     private bool GoToAnyTendril()
@@ -284,7 +296,7 @@ public class PlayerObject : MonoBehaviour
         {
             timeActive += Time.deltaTime;
             // resource test
-            resourceCount += 2f * Time.deltaTime;
+            //resourceCount += 0.5f * Time.deltaTime;
 
             // spawn new tendril 
             if (Time.time - lastTendrilSpawn > tendrilSpawnPeriod)
@@ -335,7 +347,7 @@ public class PlayerObject : MonoBehaviour
                     }
                 }
 
-                if (inputDevice.Action3.WasPressed)
+                if (inputDevice.Action3.WasPressed && currentFocus == FocusState.Tip)
                 {
                     // focus on root
                     FocusOnRoot();
@@ -353,14 +365,14 @@ public class PlayerObject : MonoBehaviour
                         GoToNextLeftTendril();
                     }
                 }
-                if (inputDevice.Action3.WasReleased)
+                if (inputDevice.Action3.WasReleased && currentFocus == FocusState.Root)
                 {
                     // focus on tip
                     FocusOnTip();
                 }
 
                 // pause
-                if (inputDevice.MenuWasPressed || !inputDevice.IsAttached)
+                if (inputDevice.MenuWasPressed)// || !inputDevice.IsAttached)
                 {
                     Debug.Log(number.ToString() + " player pressed pause.");
                     gameController.TogglePause();
