@@ -30,6 +30,7 @@ public class PlayerObject : MonoBehaviour
     public float mapZoomLevel = 50;
     public float playerZoomLevel = 30;
 
+    private float previousZoom;
     private float zoomTarget = 5;
 
     private float timeActive = 0f;
@@ -179,7 +180,8 @@ public class PlayerObject : MonoBehaviour
     {
         Tip,
         Root,
-        Player
+        Player,
+        Map
     }
     private FocusState currentFocus;
 
@@ -204,6 +206,7 @@ public class PlayerObject : MonoBehaviour
         {
             currentFocus = FocusState.Tip;
             playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].activeTip.transform, maintainOffset: false);
+            zoomTarget = previousZoom;
         }
     }
 
@@ -211,6 +214,11 @@ public class PlayerObject : MonoBehaviour
     {
         if (roots[activeRootIndex] != null)
         {
+            if (currentFocus == FocusState.Tip)
+            {
+                previousZoom = zoomTarget;
+            }
+
             currentFocus = FocusState.Root;
             playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
             zoomTarget = playerZoomLevel;
@@ -223,6 +231,11 @@ public class PlayerObject : MonoBehaviour
 
     private void FocusOnPlayer()
     {
+        if (currentFocus == FocusState.Tip)
+        {
+            previousZoom = zoomTarget;
+        }
+
         currentFocus = FocusState.Player;
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(this.transform, maintainOffset: false);
 
@@ -232,6 +245,13 @@ public class PlayerObject : MonoBehaviour
 
     private void FocusOnMap()
     {
+        if (currentFocus == FocusState.Tip)
+        {
+            previousZoom = zoomTarget;
+        }
+
+        currentFocus = FocusState.Map;
+
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(null);
         playerCamera.transform.position = new Vector3(0, 0, playerCamera.transform.position.z);
         zoomTarget = mapZoomLevel;
@@ -320,12 +340,12 @@ public class PlayerObject : MonoBehaviour
                 if (activeRootIndex >= 0 && activeRoot != null)
                 {
                     // branching
-                    if (inputDevice.Action1.WasPressed)
+                    if (inputDevice.Action1.WasPressed || inputDevice.RightTrigger.WasPressed)
                     {
                         Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
                         activeRoot.StartBranch();
                     }
-                    if (inputDevice.Action1.WasReleased)
+                    if (inputDevice.Action1.WasReleased || inputDevice.RightTrigger.WasReleased)
                     {
                         Debug.Log(number.ToString() + " player released Action 1 (branch).");
                         activeRoot.EndBranch();
@@ -342,14 +362,26 @@ public class PlayerObject : MonoBehaviour
                     }
 
                     // accelerate growth
-                    if (inputDevice.LeftBumper.IsPressed || inputDevice.RightBumper.IsPressed || inputDevice.LeftTrigger.IsPressed || inputDevice.RightTrigger.IsPressed)
+                    if (false)//(inputDevice.LeftBumper.IsPressed || inputDevice.RightBumper.IsPressed || inputDevice.LeftTrigger.IsPressed || inputDevice.RightTrigger.IsPressed)
                     {
                         Debug.Log(number.ToString() + " player accelerating growth.");
                         activeRoot.AccelerateGrowth();
                     }
                 }
 
-                if (inputDevice.Action3.WasPressed && currentFocus == FocusState.Tip)
+                if (inputDevice.LeftBumper.IsPressed)
+                {
+                    GoToNextLeftTendril();
+                    FocusOnTip();
+                }
+
+                if (inputDevice.RightBumper.IsPressed)
+                {
+                    GoToNextRightTendril();
+                    FocusOnTip();
+                }
+
+                if ((inputDevice.Action3.WasPressed || inputDevice.LeftTrigger.WasPressed) && currentFocus == FocusState.Tip)
                 {
                     // focus on root
                     FocusOnRoot();
@@ -358,8 +390,8 @@ public class PlayerObject : MonoBehaviour
                 {
                     //bool goRight = false;
                     //bool goLeft = false;
-                    bool goLeft = inputDevice.LeftStickLeft.WasPressed || inputDevice.LeftTrigger.WasPressed;
-                    bool goRight = inputDevice.LeftStickRight.WasPressed || inputDevice.RightTrigger.WasPressed;
+                    bool goLeft = inputDevice.LeftStickLeft.WasPressed;
+                    bool goRight = inputDevice.LeftStickRight.WasPressed;
                     /*
                     switch(number)
                     {
@@ -393,7 +425,7 @@ public class PlayerObject : MonoBehaviour
                         GoToNextLeftTendril();
                     }
                 }
-                if (inputDevice.Action3.WasReleased && currentFocus == FocusState.Root)
+                if ((inputDevice.Action3.WasReleased || inputDevice.LeftTrigger.WasReleased) && currentFocus == FocusState.Root)
                 {
                     // focus on tip
                     FocusOnTip();
@@ -410,7 +442,7 @@ public class PlayerObject : MonoBehaviour
                 if (currentFocus == FocusState.Tip)
                 {
                     float deltaY = inputDevice.RightStick.Y;
-                    float originalSize = playerCamera.orthographicSize;
+                    float originalSize = zoomTarget;
                     zoomTarget = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
                 }
             }
