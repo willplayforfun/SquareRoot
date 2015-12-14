@@ -13,6 +13,8 @@ public class TendrilRoot : TendrilNode
         activeTip.growDirection = transform.up;
         activeTip.SetParent(this);
         AddChild(activeTip);
+
+        onFireIndicator.SetActive(false);
     }
 
     public override void AddResources(float amount)
@@ -37,11 +39,19 @@ public class TendrilRoot : TendrilNode
     public void CutTendril()
     {
         Die();
+        onFireIndicator.SetActive(false);
     }
 
     public override void CatchFire()
     {
         base.CatchFire();
         player.Lose();
+    }
+
+    public GameObject onFireIndicator;
+
+    public void TipCaughtFire()
+    {
+        onFireIndicator.SetActive(true);
     }
 }
