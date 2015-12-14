@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerUI : MonoBehaviour
 {
@@ -21,6 +22,36 @@ public class PlayerUI : MonoBehaviour
 
     public Image needBar;
     public Image resourceBar;
+
+    public Image vignette;
+    public Color vignetteColor
+    {
+        set
+        {
+            vignette.color = value;
+        }
+        get
+        {
+            return vignette.color;
+        }
+    }
+    public void FadeVignetteToColor(Color target, float time)
+    {
+        StartCoroutine(FadeRoutine(target, time));
+    }
+    IEnumerator FadeRoutine(Color target, float time)
+    {
+        float startTime = Time.time;
+        Color start = vignetteColor;
+
+        while (Time.time - startTime < time)
+        {
+            vignetteColor = Color.Lerp(start, target, (Time.time - startTime) / time);
+            yield return null;
+        }
+
+        vignetteColor = target;
+    }
 
     public GameObject newTendrilNotification;
 

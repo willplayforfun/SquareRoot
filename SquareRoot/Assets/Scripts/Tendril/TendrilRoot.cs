@@ -53,5 +53,6 @@ public class TendrilRoot : TendrilNode
     public void TipCaughtFire()
     {
         onFireIndicator.SetActive(true);
+        player.TendrilCaughtOnFire();
     }
 }

@@ -117,6 +117,8 @@ public class PlayerObject : MonoBehaviour
 
         FocusOnPlayer();
 
+        ui.vignetteColor = Color.clear;
+
         alive_ = true;
         resourceCount = startingResourceCount;
     }
@@ -179,6 +181,8 @@ public class PlayerObject : MonoBehaviour
             else
             {
                 ui.ShowNotification();
+                ui.vignetteColor = Color.green;
+                ui.FadeVignetteToColor(new Color(0, 255, 0, 0), 1);
             }
         }
     }
@@ -464,6 +468,12 @@ public class PlayerObject : MonoBehaviour
 
             playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
         }
+    }
+    
+    public void TendrilCaughtOnFire()
+    {
+        ui.vignetteColor = Color.red;
+        ui.FadeVignetteToColor(new Color(255, 0, 0, 0), 1);
     }
 
     // initialization function called by GameController at scene start
