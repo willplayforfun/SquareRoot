@@ -3,10 +3,16 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
-    private Color[] playerColors = { new Color(30  / 255f, 167 / 255f, 255 / 255f),
-                                     new Color(232 / 255f, 106 / 255f, 23  / 255f),
-                                     new Color(115 / 255f, 205 / 255f, 75  / 255f),
-                                     new Color(255 / 255f, 204 / 255f, 0   / 255f) };
+    public static Color[] playerColors
+    {
+        get
+        {
+            return new Color[]{ new Color(30  / 255f, 167 / 255f, 255 / 255f),
+                                new Color(232 / 255f, 106 / 255f, 23  / 255f),
+                                new Color(115 / 255f, 205 / 255f, 75  / 255f),
+                                new Color(255 / 255f, 204 / 255f, 0   / 255f) };
+        }
+    }
 
     // GameController used to get required resource count
     GameController gameController;
