@@ -330,7 +330,7 @@ public class PlayerObject : MonoBehaviour
                         Debug.Log(number.ToString() + " player released Action 1 (branch).");
                         activeRoot.EndBranch();
                     }
-                    activeRoot.BranchAim(inputDevice.LeftStick.Vector);
+                    activeRoot.BranchAim(playerCamera.transform.TransformDirection(inputDevice.LeftStick.Vector));
 
                     // cutting
                     if (inputDevice.Action2.WasPressed)
