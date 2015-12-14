@@ -126,6 +126,7 @@ public class PlayerObject : MonoBehaviour
             {
                 currentTendrilIndicator.rotation = spawn.transform.rotation;
                 transform.position = spawn.transform.position;
+                playerCamera.transform.rotation = spawn.transform.rotation;
                 mSpawnPoints = spawn.spawnPoints;
             }
         }
@@ -355,14 +356,16 @@ public class PlayerObject : MonoBehaviour
                 }
                 if (inputDevice.Action3.IsPressed)
                 {
-                    bool goRight = false;
-                    bool goLeft = false;
-
+                    //bool goRight = false;
+                    //bool goLeft = false;
+                    bool goLeft = inputDevice.LeftStickLeft.WasPressed || inputDevice.LeftTrigger.WasPressed;
+                    bool goRight = inputDevice.LeftStickRight.WasPressed || inputDevice.RightTrigger.WasPressed;
+                    /*
                     switch(number)
                     {
                         case PlayerNum.First:
-                            goLeft = inputDevice.LeftStickLeft.WasPressed;
-                            goRight = inputDevice.LeftStickRight.WasPressed;
+                            goLeft = inputDevice.LeftStickLeft.WasPressed || inputDevice.LeftTrigger.WasPressed;
+                            goRight = inputDevice.LeftStickRight.WasPressed || inputDevice.RightTrigger.WasPressed;
                             break;
                         case PlayerNum.Second:
                             goLeft = inputDevice.LeftStickUp.WasPressed;
@@ -377,6 +380,7 @@ public class PlayerObject : MonoBehaviour
                             goRight = inputDevice.LeftStickUp.WasPressed;
                             break;
                     }
+                    */
 
                     if (goRight)
                     {
