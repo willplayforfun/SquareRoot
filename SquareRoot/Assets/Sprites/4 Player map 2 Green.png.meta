@@ -1,9 +1,28 @@
 fileFormatVersion: 2
-guid: 2f842c30a5a67114ba861dbe8d2ea8ae
-timeCreated: 1450083722
-licenseType: Free
+guid: a7391acf61660274c8da13461662c3b8
+timeCreated: 1450084935
+licenseType: Pro
 TextureImporter:
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    21300000: 4 Player map 2 Green_0
+    21300002: 4 Player map 2 Green_1
+    21300004: 4 Player map 2 Green_2
+    21300006: 4 Player map 2 Green_3
+    21300008: 4 Player map 2 Green_4
+    21300010: 4 Player map 2 Green_5
+    21300012: 4 Player map 2 Green_6
+    21300014: 4 Player map 2 Green_7
+    21300016: 4 Player map 2 Green_8
+    21300018: 4 Player map 2 Green_9
+    21300020: 4 Player map 2 Green_10
+    21300022: 4 Player map 2 Green_11
+    21300024: 4 Player map 2 Green_12
+    21300026: 4 Player map 2 Green_13
+    21300028: 4 Player map 2 Green_14
+    21300030: 4 Player map 2 Green_15
+    21300032: 4 Player map 2 Green_16
+    21300034: 4 Player map 2 Green_17
+    21300036: 4 Player map 2 Green_18
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -26,11 +45,11 @@ TextureImporter:
   cubemapConvolutionSteps: 8
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -1
-  maxTextureSize: 2048
+  textureFormat: -3
+  maxTextureSize: 8192
   textureSettings:
     filterMode: -1
-    aniso: -1
+    aniso: 16
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -38,7 +57,7 @@ TextureImporter:
   rGBM: 0
   compressionQuality: 50
   allowsAlphaSplitting: 0
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -49,7 +68,197 @@ TextureImporter:
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
-    sprites: []
+    sprites:
+    - name: 4 Player map 2 Green_0
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 5274
+        width: 830
+        height: 780
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_1
+      rect:
+        serializedVersion: 2
+        x: 5480
+        y: 5664
+        width: 830
+        height: 361
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_2
+      rect:
+        serializedVersion: 2
+        x: 6324
+        y: 4870
+        width: 491
+        height: 715
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_3
+      rect:
+        serializedVersion: 2
+        x: 1871
+        y: 4473
+        width: 397
+        height: 368
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_4
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 4091
+        width: 390
+        height: 325
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_5
+      rect:
+        serializedVersion: 2
+        x: 3199
+        y: 4141
+        width: 376
+        height: 679
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_6
+      rect:
+        serializedVersion: 2
+        x: 4101
+        y: 4091
+        width: 419
+        height: 354
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_7
+      rect:
+        serializedVersion: 2
+        x: 4542
+        y: 3615
+        width: 447
+        height: 425
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_8
+      rect:
+        serializedVersion: 2
+        x: 4563
+        y: 2886
+        width: 852
+        height: 353
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_9
+      rect:
+        serializedVersion: 2
+        x: 4989
+        y: 1688
+        width: 455
+        height: 353
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_10
+      rect:
+        serializedVersion: 2
+        x: 4563
+        y: 1291
+        width: 426
+        height: 339
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_11
+      rect:
+        serializedVersion: 2
+        x: 3185
+        y: 1269
+        width: 426
+        height: 772
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_12
+      rect:
+        serializedVersion: 2
+        x: 2297
+        y: 1717
+        width: 440
+        height: 353
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_13
+      rect:
+        serializedVersion: 2
+        x: 1864
+        y: 2135
+        width: 397
+        height: 325
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_14
+      rect:
+        serializedVersion: 2
+        x: 1424
+        y: 2907
+        width: 823
+        height: 361
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_15
+      rect:
+        serializedVersion: 2
+        x: 2802
+        y: 2510
+        width: 1256
+        height: 1061
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_16
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 482
+        width: 404
+        height: 751
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_17
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 49
+        width: 837
+        height: 412
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4 Player map 2 Green_18
+      rect:
+        serializedVersion: 2
+        x: 5992
+        y: 85
+        width: 794
+        height: 722
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 
   assetBundleName: 
