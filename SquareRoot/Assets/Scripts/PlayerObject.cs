@@ -56,6 +56,8 @@ public class PlayerObject : MonoBehaviour
             return playerCamera;
         }
     }
+    //minimap camera
+    Camera minimapCamera;
 
     public PlayerUI ui;
 
@@ -478,6 +480,14 @@ public class PlayerObject : MonoBehaviour
             }
 
             playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
+
+            //Personal Minimap code:
+            //GameObject minimapTrackingTransformHolder = Instantiate<GameObject> 
+            //float minimapX = (minX + maxX) / 2;
+            //float minimapY = (minY + maxY) / 2;
+            //float minimapZ = playerCamera.GetComponent<FollowingCamera>().tra
+            //minimapTransform.position = minX + maxX / 2;
+            //minimapCamera.GetComponent<FollowingCamera>().SetTrackingTarget()
         }
     }
     

@@ -1,7 +1,13 @@
 fileFormatVersion: 2
-guid: 69eef915676bde843b12f4a8b119e857
-timeCreated: 1450077113
+<<<<<<< HEAD:SquareRoot/Assets/Textures/Branch.jpg.meta
+guid: b8c1bc576d11e9048a7c940f16bfc21d
+timeCreated: 1450088416
+licenseType: Pro
+=======
+guid: eb9ffa61716f71948acc81f418524fe8
+timeCreated: 1450077947
 licenseType: Free
+>>>>>>> origin/master:SquareRoot/Assets/Textures/Root.png.meta
 TextureImporter:
   fileIDToRecycleName: {}
   serializedVersion: 2
@@ -37,7 +43,6 @@ TextureImporter:
   lightmap: 0
   rGBM: 0
   compressionQuality: 50
-  allowsAlphaSplitting: 0
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
