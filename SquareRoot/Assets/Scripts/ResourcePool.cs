@@ -25,7 +25,7 @@ public class ResourcePool : MonoBehaviour
             float actualAmount = Mathf.Min(amount, desiredAmount);
 
             amount -= actualAmount;
-            GetComponent<MeshRenderer>().material.color = Color.Lerp(Color.black, Color.green, amount / maxAmount);
+            GetComponent<SpriteRenderer>().color = Color.Lerp(Color.black, Color.white, amount / maxAmount);
 
             Feed.Invoke(actualAmount / feeders);
         }
