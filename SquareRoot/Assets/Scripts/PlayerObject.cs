@@ -204,6 +204,7 @@ public class PlayerObject : MonoBehaviour
     {
         currentFocus = FocusState.Root;
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
+        zoomTarget = 15;
     }
 
     private void FocusOnPlayer()
@@ -212,12 +213,14 @@ public class PlayerObject : MonoBehaviour
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(this.transform, maintainOffset: false);
 
         currentTendrilIndicator.gameObject.SetActive(false);
+        zoomTarget = 15;
     }
 
     private void FocusOnMap()
     {
         playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(null);
         playerCamera.transform.position = new Vector3(0, 0, playerCamera.transform.position.z);
+        zoomTarget = 30;
     }
 
     private bool GoToAnyTendril()
@@ -364,11 +367,14 @@ public class PlayerObject : MonoBehaviour
                 }
 
                 // camera control
-                float deltaY = inputDevice.RightStick.Y;
-                float originalSize = playerCamera.orthographicSize;
-                zoomTarget = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
+                if (currentFocus == FocusState.Tip)
+                {
+                    float deltaY = inputDevice.RightStick.Y;
+                    float originalSize = playerCamera.orthographicSize;
+                    zoomTarget = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
+                }
 
-                playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.4f);
+                playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
             }
         }
     }
