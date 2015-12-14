@@ -8,15 +8,22 @@ public class GlobalUI : MonoBehaviour
     public Text victoryText;
     public GameObject scoreScreen;
     public GameObject pauseMenu;
+    public GameObject gameOverScreen;
+    public GameObject gameOverFirstButton;
 
     void Start()
     {
         victoryText.gameObject.SetActive(false);
         scoreScreen.SetActive(false);
+        gameOverScreen.SetActive(false);
 
         HidePauseMenu();
     }
+    public void ShowGameOverScreen(){
 
+        gameOverScreen.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(gameOverFirstButton);
+    }
     public void ShowPauseMenu()
     {
         //EventSystem.current.SetSelectedGameObject(pauseMenu.GetComponentInChildren<Button>().gameObject);
