@@ -38,6 +38,8 @@ public class TendrilTip : TendrilNode
     {
         base.Start();
 
+        GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)tendrilRoot.player.number];
+
         if (hud != null)
         {
             hud.maxAngle = maxBranchAngle;
@@ -85,6 +87,8 @@ public class TendrilTip : TendrilNode
         //newNode.transform.SetParent(parent.transform);
         newNode.transform.position = transform.position;
         newNode.transform.rotation = Quaternion.LookRotation(Vector3.back, parent.transform.position - transform.position);
+
+        newNode.GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)tendrilRoot.player.number];
 
         //set collider
         float length = 2 * Vector2.Distance(parent.transform.position, newNode.transform.position);

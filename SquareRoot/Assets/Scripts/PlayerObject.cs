@@ -17,6 +17,7 @@ public class PlayerObject : MonoBehaviour
         alive_ = false;
         playerCamera.GetComponent<FollowingCamera>().ApplyShock(8);
         FocusOnMap();
+        playerCamera.orthographicSize = zoomTarget;
     }
 
     public float startingResourceCount = 5;
@@ -264,7 +265,7 @@ public class PlayerObject : MonoBehaviour
             if (roots[i] != null && roots[i].IsAlive())
             {
                 currentTendrilIndicator.gameObject.SetActive(true);
-                currentTendrilIndicator.position = roots[i].transform.position - roots[i].transform.up;
+                currentTendrilIndicator.position = roots[i].transform.position - 2f * roots[i].transform.up;
 
                 activeRootIndex = i;
                 FocusOnRoot();
@@ -280,7 +281,7 @@ public class PlayerObject : MonoBehaviour
             if (roots[i] != null && roots[i].IsAlive())
             {
                 currentTendrilIndicator.gameObject.SetActive(true);
-                currentTendrilIndicator.position = roots[i].transform.position - roots[i].transform.up;
+                currentTendrilIndicator.position = roots[i].transform.position - 2f * roots[i].transform.up;
 
                 activeRootIndex = i;
                 FocusOnRoot();
@@ -354,12 +355,35 @@ public class PlayerObject : MonoBehaviour
                 }
                 if (inputDevice.Action3.IsPressed)
                 {
-                    if (inputDevice.LeftStickRight.WasPressed)
+                    bool goRight = false;
+                    bool goLeft = false;
+
+                    switch(number)
+                    {
+                        case PlayerNum.First:
+                            goLeft = inputDevice.LeftStickLeft.WasPressed;
+                            goRight = inputDevice.LeftStickRight.WasPressed;
+                            break;
+                        case PlayerNum.Second:
+                            goLeft = inputDevice.LeftStickUp.WasPressed;
+                            goRight = inputDevice.LeftStickDown.WasPressed;
+                            break;
+                        case PlayerNum.Third:
+                            goLeft = inputDevice.LeftStickRight.WasPressed;
+                            goRight = inputDevice.LeftStickLeft.WasPressed;
+                            break;
+                        case PlayerNum.Fourth:
+                            goLeft = inputDevice.LeftStickDown.WasPressed;
+                            goRight = inputDevice.LeftStickUp.WasPressed;
+                            break;
+                    }
+
+                    if (goRight)
                     {
                         // go to next right tendril
                         GoToNextRightTendril();
                     }
-                    if (inputDevice.LeftStickLeft.WasPressed)
+                    if (goLeft)
                     {
                         // go to next left tendril
                         GoToNextLeftTendril();
@@ -385,9 +409,9 @@ public class PlayerObject : MonoBehaviour
                     float originalSize = playerCamera.orthographicSize;
                     zoomTarget = Mathf.Clamp(originalSize - deltaY * cameraZoomSpeed, minCameraSize, maxCameraSize);
                 }
-
-                playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
             }
+
+            playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
         }
     }
 
