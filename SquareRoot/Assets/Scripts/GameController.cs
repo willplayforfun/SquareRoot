@@ -69,6 +69,11 @@ public class GameController : MonoBehaviour
         JoinScreenController jsc = GameObject.FindGameObjectWithTag(Tags.DeviceBag).GetComponent<JoinScreenController>();
         int numPlayers = jsc.playerList.Count;
 
+        if(numPlayers < 2)
+        {
+            ui.minimap.SetActive(false);
+        }
+
         // spawn requisite number of players and have them configure for split screen
         players = new List<PlayerObject>();
         for(int i = 0; i < numPlayers; i++)

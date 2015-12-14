@@ -11,6 +11,8 @@ public class GlobalUI : MonoBehaviour
     public GameObject gameOverScreen;
     public GameObject gameOverFirstButton;
 
+    public GameObject minimap;
+
     void Start()
     {
         victoryText.gameObject.SetActive(false);
