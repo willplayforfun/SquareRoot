@@ -49,6 +49,13 @@ public class PlayerObject : MonoBehaviour
 
     // Player camera for zooming and splitscreening
     Camera playerCamera;
+    public Camera camera
+    {
+        get
+        {
+            return playerCamera;
+        }
+    }
 
     // order in the list of players
     PlayerNum playerNum;
