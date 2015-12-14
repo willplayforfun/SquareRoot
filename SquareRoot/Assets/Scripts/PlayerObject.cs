@@ -57,6 +57,8 @@ public class PlayerObject : MonoBehaviour
         }
     }
 
+    public PlayerUI ui;
+
     // order in the list of players
     PlayerNum playerNum;
     public PlayerNum number
@@ -155,29 +157,36 @@ public class PlayerObject : MonoBehaviour
     {
         lastTendrilSpawn = Time.time;
 
-        int index = 0;
-        foreach (SpawnPoint sp in mSpawnPoints)
+        int attempts = 0;
+        int index = Random.Range(0, mSpawnPoints.Length);
+        SpawnPoint sp;
+        while((sp = mSpawnPoints[index]).IsInUse() && attempts < 10)
         {
-            if (!sp.IsInUse())
-            {
-                TendrilRoot newRoot = Instantiate(tendrilPrefab);
-                newRoot.player = this;
-                newRoot.transform.position = sp.position;
-                newRoot.transform.rotation = sp.rotation;
-                sp.AttachRoot(newRoot);
-                roots[index] = newRoot;
+            index = Random.Range(0, mSpawnPoints.Length);
+            attempts++;
+        }
 
-                // if focused on player
-                if (currentFocus == FocusState.Player)
-                {
-                    // focus on new tendril
-                    activeRootIndex = -1;
-                    GoToNextRightTendril();
-                    FocusOnTip();
-                }
-                break;
+        if (!sp.IsInUse())
+        {
+            TendrilRoot newRoot = Instantiate(tendrilPrefab);
+            newRoot.player = this;
+            newRoot.transform.position = sp.position;
+            newRoot.transform.rotation = sp.rotation;
+            sp.AttachRoot(newRoot);
+            roots[index] = newRoot;
+
+            // if focused on player
+            if (currentFocus == FocusState.Player)
+            {
+                // focus on new tendril
+                activeRootIndex = -1;
+                GoToNextRightTendril();
+                FocusOnTip();
             }
-            index += 1;
+            else
+            {
+                ui.ShowNotification();
+            }
         }
     }
 
@@ -293,7 +302,7 @@ public class PlayerObject : MonoBehaviour
             if (roots[i] != null && roots[i].IsAlive())
             {
                 currentTendrilIndicator.gameObject.SetActive(true);
-                currentTendrilIndicator.position = roots[i].transform.position - 2f * roots[i].transform.up;
+                currentTendrilIndicator.position = roots[i].transform.position - 3f * roots[i].transform.up;
 
                 activeRootIndex = i;
                 FocusOnRoot();
@@ -309,7 +318,7 @@ public class PlayerObject : MonoBehaviour
             if (roots[i] != null && roots[i].IsAlive())
             {
                 currentTendrilIndicator.gameObject.SetActive(true);
-                currentTendrilIndicator.position = roots[i].transform.position - 2f * roots[i].transform.up;
+                currentTendrilIndicator.position = roots[i].transform.position - 3f * roots[i].transform.up;
 
                 activeRootIndex = i;
                 FocusOnRoot();
@@ -332,6 +341,7 @@ public class PlayerObject : MonoBehaviour
             {
                 Debug.Log("Spawning New Tendril");
                 SpawnTendril();
+                
             }
 
             // lose check
@@ -350,12 +360,13 @@ public class PlayerObject : MonoBehaviour
                     if (inputDevice.Action1.WasPressed || inputDevice.RightTrigger.WasPressed)
                     {
                         Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
+                        activeRoot.EndBranch();
                         activeRoot.StartBranch();
                     }
                     if (inputDevice.Action1.WasReleased || inputDevice.RightTrigger.WasReleased)
                     {
                         Debug.Log(number.ToString() + " player released Action 1 (branch).");
-                        activeRoot.EndBranch();
+                        //activeRoot.EndBranch();
                     }
                     activeRoot.BranchAim(playerCamera.transform.TransformDirection(inputDevice.LeftStick.Vector));
 
@@ -366,6 +377,7 @@ public class PlayerObject : MonoBehaviour
                         activeRoot.CutTendril();
 
                         GoToAnyTendril();
+                        ui.HideNotification();
                     }
 
                     // accelerate growth
@@ -376,24 +388,27 @@ public class PlayerObject : MonoBehaviour
                     }
                 }
 
-                if (inputDevice.LeftBumper.IsPressed)
+                if (inputDevice.LeftBumper.WasPressed)
                 {
                     GoToNextLeftTendril();
                     FocusOnTip();
+                    ui.HideNotification();
                 }
 
-                if (inputDevice.RightBumper.IsPressed)
+                if (inputDevice.RightBumper.WasPressed)
                 {
                     GoToNextRightTendril();
                     FocusOnTip();
-                }
+                    ui.HideNotification();
+                }   
 
                 if ((inputDevice.Action3.WasPressed || inputDevice.LeftTrigger.WasPressed) && currentFocus == FocusState.Tip)
                 {
                     // focus on root
                     FocusOnRoot();
+                    ui.HideNotification();
                 }
-                if (inputDevice.Action3.IsPressed)
+                if (inputDevice.Action3.IsPressed || inputDevice.LeftTrigger.IsPressed)
                 {
                     //bool goRight = false;
                     //bool goLeft = false;

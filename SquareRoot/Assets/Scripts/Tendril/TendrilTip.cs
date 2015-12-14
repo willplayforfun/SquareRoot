@@ -44,11 +44,19 @@ public class TendrilTip : TendrilNode
         {
             hud.maxAngle = maxBranchAngle;
             hud.minAngle = minBranchAngle;
+            hud.Show();
         }
     }
     protected override void Update()
     {
         base.Update();
+    }
+
+    public override void CatchFire()
+    {
+        base.CatchFire();
+
+        tendrilRoot.TipCaughtFire();
     }
 
     void CreateNewBranch(Vector2 newDirection)
