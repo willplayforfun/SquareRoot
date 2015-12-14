@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class TendrilRoot : TendrilNode
 {
     public TendrilTip activeTip;
     public PlayerObject player;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
     protected override void Start()
     {
         base.Start();
@@ -13,6 +17,7 @@ public class TendrilRoot : TendrilNode
         activeTip.growDirection = transform.up;
         activeTip.SetParent(this);
         AddChild(activeTip);
+        activeTip.meshRoot = this;
 
         onFireIndicator.SetActive(false);
     }

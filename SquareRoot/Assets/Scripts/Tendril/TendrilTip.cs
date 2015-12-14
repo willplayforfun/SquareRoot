@@ -5,6 +5,7 @@ public class TendrilTip : TendrilNode
 {
     // reference to the tendril base node
     public TendrilRoot tendrilRoot;
+    public TendrilNode meshRoot;
 
     public TendrilTip tipPrefab;
     public GameObject nodePrefab;
@@ -47,9 +48,18 @@ public class TendrilTip : TendrilNode
             hud.Show();
         }
     }
+
+    private float lastVertexDrop;
     protected override void Update()
     {
         base.Update();
+
+        if(Time.time - lastVertexDrop > 0.2f && meshRoot != null)
+        {
+            lastVertexDrop = Time.time;
+            // update mesh
+            meshRoot.UpdateMesh(transform.position, -transform.up);
+        }
     }
 
     public override void CatchFire()
@@ -80,6 +90,8 @@ public class TendrilTip : TendrilNode
             newtip.tendrilRoot = tendrilRoot;
             newtip.growDirection = direction;
 
+            newtip.meshRoot = parentNode;
+
             growDirection = newDirection;
         }
     }
@@ -96,7 +108,7 @@ public class TendrilTip : TendrilNode
         newNode.transform.position = transform.position;
         newNode.transform.rotation = Quaternion.LookRotation(Vector3.back, parent.transform.position - transform.position);
 
-        newNode.GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)tendrilRoot.player.number];
+        //newNode.GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)tendrilRoot.player.number];
 
         //set collider
         float length = 2 * Vector2.Distance(parent.transform.position, newNode.transform.position);

@@ -11,6 +11,11 @@ public class BranchHUD : MonoBehaviour
     public LineRenderer dirRenderer;
     public LineRenderer[] extentsRenderers;
 
+    void Start()
+    {
+        Hide();
+    }
+
     public void Show()
     {
         foreach (LineRenderer renderer in extentsRenderers)
@@ -59,6 +64,7 @@ public class BranchHUD : MonoBehaviour
             {
                 renderer.enabled = true;
             }
+            dirRenderer.enabled = true;
         }
         else
         {
