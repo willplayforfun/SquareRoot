@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class GameController : MonoBehaviour
 {
     public float startBuffer = 10;
     public float resourceRate = 1f;
+    public float GameEndDelay = 2.0f; // Time Between Game Ending and Game Over screen showing
 
     [Space(12)]
 
@@ -135,8 +137,18 @@ public class GameController : MonoBehaviour
             TogglePause(showMenu: false);
         }
 
-        ui.ShowGameOverScreen();
+        StartCoroutine("DisplayGameOverMenu");
         // TODO scoreboard
         
+    }
+
+    IEnumerator DisplayGameOverMenu()
+    {   
+        float mStartTime = Time.realtimeSinceStartup;
+        while (Time.realtimeSinceStartup - mStartTime < GameEndDelay)
+        {
+            yield return null;
+        }
+        ui.ShowGameOverScreen();
     }
 }
