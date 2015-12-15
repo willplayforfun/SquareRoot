@@ -520,10 +520,12 @@ public class PlayerObject : MonoBehaviour
                 if (numPlayers == 1)
                 {
                     playerCamera.rect = new Rect(0, 0, 1, 1);
+                    minCameraSize *= 0.25f;
                 }
                 else if (numPlayers < 4)
                 {
                     playerCamera.rect = new Rect(0, 0.5f, 1, 0.5f);
+                    minCameraSize *= 0.5f;
                 }
                 else
                 {
@@ -534,6 +536,7 @@ public class PlayerObject : MonoBehaviour
                 if (numPlayers == 2)
                 {
                     playerCamera.rect = new Rect(0, 0, 1, 0.5f);
+                    minCameraSize *= 0.5f;
                 }
                 else if (numPlayers == 3)
                 {

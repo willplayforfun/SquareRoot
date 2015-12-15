@@ -21,7 +21,8 @@ public class Dead : State
     {
         base.OnStateEnter();
 
-        owner.GetComponent<MeshRenderer>().material.color = owner.deadColor;
+        //owner.mainMeshMaker.GetComponent<MeshRenderer>().material.color = owner.deadColor;
+        //owner.sideMeshMaker.GetComponent<MeshRenderer>().material.color = owner.deadColor;
 
         foreach (TendrilNode t in owner.GetChildren())
         {
