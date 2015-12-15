@@ -81,6 +81,7 @@ public class TendrilTip : TendrilNode
             newtip.growDirection = direction;
 
             growDirection = newDirection;
+            mAudioSource.PlayOneShot(theGameController.SplitSound);
         }
     }
 
@@ -131,6 +132,10 @@ public class TendrilTip : TendrilNode
                     if (typeof(OnFire) != mState.GetType())
                     {
                         CatchFire();
+                        if (mAudioSource && theGameController.OnFireSound)
+                        {
+                            mAudioSource.PlayOneShot(theGameController.OnFireSound);
+                        }
                         if (hud != null) hud.Hide();
                     }
                     break;
@@ -140,6 +145,8 @@ public class TendrilTip : TendrilNode
                     break;
                 case Layers.Rock:
                     SetState(new Alive(this));
+                    if (mAudioSource && theGameController.HitRockSound)
+                        mAudioSource.PlayOneShot(theGameController.HitRockSound);
                     if(hud != null) hud.Hide();
                     break;
                 case Layers.Tendril:
@@ -149,6 +156,10 @@ public class TendrilTip : TendrilNode
                         if (node.IsOnFire())
                         {
                             CatchFire();
+                            if (mAudioSource && theGameController.OnFireSound)
+                            {
+                                mAudioSource.PlayOneShot(theGameController.OnFireSound);
+                            }
                         }
                         else
                         {

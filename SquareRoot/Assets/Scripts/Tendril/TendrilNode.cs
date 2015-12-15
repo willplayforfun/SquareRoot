@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class TendrilNode : MonoBehaviour
 {
+    protected static GameController theGameController;
+    protected AudioSource mAudioSource;
+
     protected State mState;
     protected Type state
     {
@@ -42,6 +45,7 @@ public class TendrilNode : MonoBehaviour
     public void Die()
     {
         SetState(new Dead(this));
+        theGameController.GetComponent<SplitscreenAudioListener>().UnregisterAudioSource(mAudioSource);
     }
     public void TreeDie()
     {
@@ -61,9 +65,20 @@ public class TendrilNode : MonoBehaviour
     {
         children = new List<TendrilNode>();
         SetState(new Alive(this));
+        mAudioSource = GetComponent<AudioSource>();
     }
     protected virtual void Start()
     {
+        if (theGameController == null)
+        {
+            theGameController = GameObject.FindObjectOfType<GameController>();  
+        }
+        SplitscreenAudioListener volumeAdjuster = theGameController.GetComponent<SplitscreenAudioListener>();
+        if (volumeAdjuster)
+        {
+            volumeAdjuster.RegisterAudioSource(mAudioSource);
+            Debug.Log("Audio Source Registered for Volume Adjustment");
+        }
         creationTime = Time.time;
     }
     protected virtual void Update()

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 public class SplitscreenAudioListener : MonoBehaviour {
     /*
-     * Adjusts Volume of AudioSources to be relative to their distance from nearest Player Camera
+     * Adjusts Volume of AudioSources to scale linearly relative to their distance from nearest Player Camera
      * AudioSources that require this should register themselves with this object through RegisterAudioSource()
      */
-    List<Camera> PlayerCameras;
+    List<Camera> PlayerCameras = new List<Camera>();
     AudioListener listener;
-    public float maxAudibleDistance = 100.0f;
-    List<AudioSource> mAudioSources = new List<AudioSource>();
+    public float maxAudibleDistance = 1000.0f;
+    public List<AudioSource> mAudioSources = new List<AudioSource>();
 
 	// Use this for initialization
 	void Start () {
@@ -23,7 +23,7 @@ public class SplitscreenAudioListener : MonoBehaviour {
         //AudioSource[] allSources = GameObject.FindObjectsOfType<AudioSource>();
         foreach(AudioSource source in mAudioSources){
             float dist = DistanceToClosestCamera(source.transform.position);
-            float volume = dist/maxAudibleDistance;
+            float volume = 1 - dist/maxAudibleDistance;
             volume = Mathf.Clamp01(volume);
             source.volume = volume;
         }
@@ -43,5 +43,9 @@ public class SplitscreenAudioListener : MonoBehaviour {
         mAudioSources.Add(newSource);
     }
 
+    public void UnregisterAudioSource(AudioSource source)
+    {
+        mAudioSources.Remove(source);
+    }
     
 }

@@ -16,6 +16,15 @@ public class GameController : MonoBehaviour
     public PlayerObject playerPrefab;
     List<PlayerObject> players;
 
+    public AudioClip OnFireSound;
+    public AudioClip HitRockSound;
+    public AudioClip NewBranchSound;
+    public AudioClip SplitSound;
+    public AudioClip SelectSound;
+    public AudioClip BackSound;
+    public AudioClip BackgroundMusic;
+
+    bool musicIsPlaying = false;
     private bool paused;
     public void TogglePause(bool showMenu = true)
     {
@@ -55,6 +64,11 @@ public class GameController : MonoBehaviour
     {
         gameObject.tag = Tags.GameController;
         Time.timeScale = 1.0f;
+        if (!musicIsPlaying)
+        {
+            GetComponent<AudioSource>().Play();
+            musicIsPlaying = true;
+        }
     }
 
     void Start()
@@ -128,7 +142,11 @@ public class GameController : MonoBehaviour
     public void EndMatch(PlayerObject winner = null)
     {
         matchOngoing = false;
-
+        if (musicIsPlaying)
+        {
+            GetComponent<AudioSource>().Stop();
+            musicIsPlaying = false;
+        }
         if(winner != null)
         {
             Debug.LogFormat("Match concluded, {0} player was winner", winner.number.ToString());

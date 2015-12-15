@@ -13,6 +13,7 @@ public class JoinPanel : MonoBehaviour
 
     public void Join()
     {
+        GetComponent<AudioSource>().Play();
         foreach (GameObject element in unjoinedElements)
         {
             element.SetActive(false);
@@ -25,6 +26,7 @@ public class JoinPanel : MonoBehaviour
 
     public void Unjoin()
     {
+        GetComponent<AudioSource>().Play();
         foreach (GameObject element in unjoinedElements)
         {
             element.SetActive(true);
