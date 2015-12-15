@@ -10,6 +10,21 @@ public class TendrilNode : MonoBehaviour
     public GameObject nodeFirePrefab;
     public GameObject fireInstance;
 
+    public GameObject nodeDeathPrefab;
+    public GameObject deathInstance;
+
+    public MeshMaker mainMeshMaker;
+    public MeshMaker sideMeshMaker;
+
+    public void UpdateMainMesh(Vector3 newPosition, Vector3 up)
+    {
+        mainMeshMaker.UpdateMesh(newPosition, up);
+    }
+    public void UpdateSideMesh(Vector3 newPosition, Vector3 up)
+    {
+        sideMeshMaker.UpdateMesh(newPosition, up);
+    }
+
     private Color deadColor_ = new Color(0.3f, 0.3f, 0.3f);
     public Color deadColor
     {
@@ -17,67 +32,7 @@ public class TendrilNode : MonoBehaviour
         {
             return deadColor_;
         }
-    }
-
-    private List<Vector3> vertices;
-    private List<Vector3> normals;
-    private List<Vector2> uvs;
-    private List<int> tris;
-    private Mesh tendrilMesh;
-    private MeshFilter meshfilter;
-
-    public float uvScale = 0.5f;
-
-    public void UpdateMesh(Vector3 newPosition, Vector3 up)
-    {
-        Vector3 right = Vector3.Cross(up, Vector3.back);
-
-        float randomScale1 = UnityEngine.Random.Range(0.8f, 1.2f);
-        float randomScale2 = UnityEngine.Random.Range(0.8f, 1.2f);
-
-        vertices.Add(transform.InverseTransformPoint(newPosition + right * 0.25f * randomScale1));
-        vertices.Add(transform.InverseTransformPoint(newPosition - right * 0.25f * randomScale2));
-
-        int end = vertices.Count - 1;
-
-        if (vertices.Count > 3)
-        {
-            float distanceFromLast = Vector3.Distance(vertices[end], vertices[end - 2]);
-
-            uvs.Add(new Vector2(0, uvs[end - 2].y + distanceFromLast * uvScale));
-            uvs.Add(new Vector2(uvScale, uvs[end - 2].y + distanceFromLast * uvScale));
-        }
-        else
-        {
-            uvs.Add(new Vector2(0, 0));
-            uvs.Add(new Vector2(uvScale, 0));
-        }
-
-        normals.Add(Vector3.back);
-        normals.Add(Vector3.back);
-
-
-        if (vertices.Count > 3)
-        {
-            tris.Add(end);
-            tris.Add(end - 1);
-            tris.Add(end - 2);
-
-            tris.Add(end - 3);
-            tris.Add(end - 2);
-            tris.Add(end - 1);
-        }
-
-        tendrilMesh.SetVertices(vertices);
-        tendrilMesh.uv = uvs.ToArray();
-        tendrilMesh.normals = normals.ToArray();
-        tendrilMesh.triangles = tris.ToArray();
-
-        tendrilMesh.RecalculateNormals();
-        tendrilMesh.RecalculateBounds();
-
-        meshfilter.mesh = tendrilMesh;
-    }
+    } 
 
     protected State mState;
     protected Type state
@@ -112,7 +67,7 @@ public class TendrilNode : MonoBehaviour
         if(this.IsAlive())
         {
             SetState(new OnFire(this));
-            if (nodeFirePrefab != null)
+            if (nodeFirePrefab != null && fireInstance == null)
             {
                 fireInstance = Instantiate(nodeFirePrefab);
                 fireInstance.transform.position = transform.position + Vector3.back;
@@ -124,7 +79,29 @@ public class TendrilNode : MonoBehaviour
     {
         SetState(new Dead(this));
         theGameController.GetComponent<SplitscreenAudioListener>().UnregisterAudioSource(mAudioSource);
+        if(fireInstance != null)
+        {
+            Destroy(fireInstance);
+        }
+        if (nodeDeathPrefab != null && deathInstance == null)
+        {
+            deathInstance = Instantiate(nodeDeathPrefab);
+            deathInstance.transform.position = transform.position + Vector3.back;
+            deathInstance.transform.SetParent(this.transform);
+        }
     }
+    void OnDestroy()
+    {
+        if (deathInstance != null)
+        {
+            Destroy(deathInstance);
+        }
+        if (fireInstance != null)
+        {
+            Destroy(fireInstance);
+        }
+    }
+
     public void TreeDie()
     {
         Die();
@@ -144,12 +121,6 @@ public class TendrilNode : MonoBehaviour
         children = new List<TendrilNode>();
         SetState(new Alive(this));
         mAudioSource = GetComponent<AudioSource>();
-
-        vertices = new List<Vector3>();
-        normals = new List<Vector3>();
-        uvs = new List<Vector2>();
-        tris = new List<int>();
-        tendrilMesh = new Mesh();
     }
     protected virtual void Start()
     {
@@ -164,20 +135,6 @@ public class TendrilNode : MonoBehaviour
             Debug.Log("Audio Source Registered for Volume Adjustment");
         }
         creationTime = Time.time;
-
-        meshfilter = GetComponent<MeshFilter>();
-        if (meshfilter != null)
-        {
-            if (this.GetType() == typeof(TendrilRoot))
-            {
-                UpdateMesh(transform.position, -transform.up);
-            }
-            else
-            {
-                UpdateMesh(transform.position, transform.up);
-
-            }
-        }
     }
     protected virtual void Update()
     {
@@ -207,31 +164,20 @@ public class TendrilNode : MonoBehaviour
         {
             parent.RemoveChild(this);
         }
-        StartCoroutine(DestructionAnimation());
-    }
-
-    IEnumerator DestructionAnimation()
-    {
-        float start = Time.time;
-
-        while(Time.time - start < 0.4f)
+        if(mainMeshMaker != null)
         {
-            float progress = (Time.time - start) / 0.4f;
-
-            for(int i = 0; i < vertices.Count; i += 2)
-            {
-                Vector3 average = Vector3.Lerp(vertices[i], vertices[i + 1], 0.5f);
-                vertices[i] = Vector3.Lerp(vertices[i], average, progress);
-                vertices[i + 1] = Vector3.Lerp(vertices[i + 1], average, progress);
-
-                tendrilMesh.SetVertices(vertices);
-            }
-
-            yield return null;
+            mainMeshMaker.AnimateDestroy(gameObject);
         }
-
-        Destroy(this.gameObject);
+        else
+        {
+            Destroy(gameObject);
+        }
+        if (sideMeshMaker != null)
+        {
+            sideMeshMaker.AnimateDestroy();
+        }
     }
+
 
     // input functions (called down through tree from TendrilRoot)
     public virtual void AccelerateGrowth()

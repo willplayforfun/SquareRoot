@@ -3,6 +3,8 @@ using System.Collections;
 
 public class TendrilTip : TendrilNode
 {
+    public bool mainTip = false;
+
     // reference to the tendril base node
     public TendrilRoot tendrilRoot;
     public TendrilNode meshRoot;
@@ -26,7 +28,7 @@ public class TendrilTip : TendrilNode
     }
 
     // distance between nodes
-    public float nodeDropRate = 1;
+    public float nodeDropRate = 2f;
     //speed of the tip
     public float growthRate = 2.0f;
 
@@ -58,7 +60,14 @@ public class TendrilTip : TendrilNode
         {
             lastVertexDrop = Time.time;
             // update mesh
-            meshRoot.UpdateMesh(transform.position, -transform.up);
+            if(mainTip)
+            {
+                //meshRoot.UpdateMainMesh(transform.position, -transform.up);
+            }
+            else
+            {
+                //meshRoot.UpdateSideMesh(transform.position, -transform.up);
+            }
         }
     }
 
@@ -91,6 +100,7 @@ public class TendrilTip : TendrilNode
             newtip.growDirection = direction;
 
             newtip.meshRoot = parentNode;
+            meshRoot = parentNode;
 
             growDirection = newDirection;
             mAudioSource.PlayOneShot(theGameController.SplitSound);
@@ -103,7 +113,7 @@ public class TendrilTip : TendrilNode
 
         // spawn new node object and setup position/rotation
         GameObject newNode = Instantiate(nodePrefab);
-        newNode.layer = Layers.Tendril;
+        //newNode.layer = Layers.Tendril;
         newNode.transform.localScale *= 0.5f;
         //newNode.transform.SetParent(parent.transform);
         newNode.transform.position = transform.position;
@@ -113,15 +123,15 @@ public class TendrilTip : TendrilNode
 
         //set collider
         float length = 2 * Vector2.Distance(parent.transform.position, newNode.transform.position);
-        BoxCollider2D newCollider = newNode.AddComponent<BoxCollider2D>();
+        BoxCollider2D newCollider = newNode.GetComponent<BoxCollider2D>();
         newCollider.size = new Vector2(1, length);
         newCollider.offset = new Vector2(0, 0.5f * length);
 
         // setup node component
-        TendrilNode newNodeComponent = newNode.AddComponent<TendrilNode>();
+        TendrilNode newNodeComponent = newNode.GetComponent<TendrilNode>();
         newNodeComponent.AddChild(this);    //new node children set
         newNodeComponent.SetParent(parent); //new node parent set
-        newNodeComponent.nodeFirePrefab = nodeFirePrefab;
+        //newNodeComponent.nodeFirePrefab = nodeFirePrefab;
 
         // update parent references
         if (parent != null)
