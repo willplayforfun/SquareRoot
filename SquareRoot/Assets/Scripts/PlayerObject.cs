@@ -191,7 +191,7 @@ public class PlayerObject : MonoBehaviour
             else
             {
                 ui.ShowTendrilNotification();
-                ui.vignetteColor = Color.green;
+                ui.vignetteColor = new Color(0, 255, 0, 0.5f);
                 ui.FadeVignetteToColor(new Color(0, 255, 0, 0), 1);
             }
         }
@@ -494,7 +494,7 @@ public class PlayerObject : MonoBehaviour
     
     public void TendrilCaughtOnFire()
     {
-        ui.vignetteColor = Color.red;
+        ui.vignetteColor = new Color(255, 0, 0, 0.8f);
         ui.FadeVignetteToColor(new Color(255, 0, 0, 0), 1);
         ui.ShowFireNotification();
     }
