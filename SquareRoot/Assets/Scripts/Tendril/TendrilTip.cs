@@ -164,6 +164,10 @@ public class TendrilTip : TendrilNode
                     break;
                 case Layers.Resources:
                     SetState(new Leeching(this, collision.gameObject));
+                    if (mAudioSource && theGameController.LeechingSound)
+                    {
+                        mAudioSource.PlayOneShot(theGameController.LeechingSound);
+                    }
                     if (hud != null) hud.Hide();
                     break;
                 case Layers.Rock:

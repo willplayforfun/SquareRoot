@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
     public AudioClip HitRockSound;
     public AudioClip NewBranchSound;
     public AudioClip SplitSound;
+    public AudioClip LeechingSound;
     public AudioClip SelectSound;
     public AudioClip BackSound;
     public AudioClip BackgroundMusic;
