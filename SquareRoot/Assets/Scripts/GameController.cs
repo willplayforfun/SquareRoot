@@ -24,6 +24,10 @@ public class GameController : MonoBehaviour
     public AudioClip SelectSound;
     public AudioClip BackSound;
     public AudioClip BackgroundMusic;
+    public AudioClip DrawSound;
+    public AudioClip ElimSound;
+    public AudioClip VictorySound;
+    public AudioClip CutSound;
 
     bool musicIsPlaying = false;
     private bool paused;
@@ -153,12 +157,14 @@ public class GameController : MonoBehaviour
             Debug.LogFormat("Match concluded, {0} player was winner", winner.number.ToString());
             ui.SetVictoryText(winner.number);
             TogglePause(showMenu: false);
+            GetComponent<AudioSource>().PlayOneShot(VictorySound);
         }
         else
         {
             Debug.Log("Match concluded as a draw");
             ui.SetDrawText();
             TogglePause(showMenu: false);
+            GetComponent<AudioSource>().PlayOneShot(DrawSound);
         }
 
         StartCoroutine("DisplayGameOverMenu");

@@ -20,6 +20,7 @@ public class TendrilRoot : TendrilNode
         activeTip.meshRoot = this;
 
         onFireIndicator.SetActive(false);
+        GetComponent<AudioSource>().PlayOneShot(theGameController.NewBranchSound);
     }
 
     public override void AddResources(float amount)
@@ -45,6 +46,7 @@ public class TendrilRoot : TendrilNode
     {
         Die();
         onFireIndicator.SetActive(false);
+        GetComponent<AudioSource>().PlayOneShot(theGameController.CutSound);
     }
 
     public override void CatchFire()

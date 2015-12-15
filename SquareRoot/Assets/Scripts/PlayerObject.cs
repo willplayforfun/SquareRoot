@@ -18,6 +18,7 @@ public class PlayerObject : MonoBehaviour
         playerCamera.GetComponent<FollowingCamera>().ApplyShock(8);
         FocusOnMap();
         playerCamera.orthographicSize = zoomTarget;
+        GetComponent<AudioSource>().PlayOneShot(gameController.ElimSound);
     }
 
     public float startingResourceCount = 5;
