@@ -120,6 +120,7 @@ public class TendrilTip : TendrilNode
         TendrilNode newNodeComponent = newNode.AddComponent<TendrilNode>();
         newNodeComponent.AddChild(this);    //new node children set
         newNodeComponent.SetParent(parent); //new node parent set
+        newNodeComponent.nodeFirePrefab = nodeFirePrefab;
 
         // update parent references
         if (parent != null)

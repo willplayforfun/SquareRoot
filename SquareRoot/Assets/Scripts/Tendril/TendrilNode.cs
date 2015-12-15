@@ -1,9 +1,21 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public class TendrilNode : MonoBehaviour
 {
+    public GameObject nodeFirePrefab;
+    public GameObject fireInstance;
+
+    private Color deadColor_ = new Color(0.3f, 0.3f, 0.3f);
+    public Color deadColor
+    {
+        get
+        {
+            return deadColor_;
+        }
+    }
 
     private List<Vector3> vertices;
     private List<Vector3> normals;
@@ -99,6 +111,12 @@ public class TendrilNode : MonoBehaviour
         if(this.IsAlive())
         {
             SetState(new OnFire(this));
+            if (nodeFirePrefab != null)
+            {
+                fireInstance = Instantiate(nodeFirePrefab);
+                fireInstance.transform.position = transform.position + Vector3.back;
+                fireInstance.transform.SetParent(this.transform);
+            }
         }
     }
     public void Die()
@@ -177,6 +195,29 @@ public class TendrilNode : MonoBehaviour
         {
             parent.RemoveChild(this);
         }
+        StartCoroutine(DestructionAnimation());
+    }
+
+    IEnumerator DestructionAnimation()
+    {
+        float start = Time.time;
+
+        while(Time.time - start < 0.4f)
+        {
+            float progress = (Time.time - start) / 0.4f;
+
+            for(int i = 0; i < vertices.Count; i += 2)
+            {
+                Vector3 average = Vector3.Lerp(vertices[i], vertices[i + 1], 0.5f);
+                vertices[i] = Vector3.Lerp(vertices[i], average, progress);
+                vertices[i + 1] = Vector3.Lerp(vertices[i + 1], average, progress);
+
+                tendrilMesh.SetVertices(vertices);
+            }
+
+            yield return null;
+        }
+
         Destroy(this.gameObject);
     }
 
