@@ -23,7 +23,7 @@ public class OnFire : State {
     {
         base.OnStateEnter();
 
-        owner.GetComponent<MeshRenderer>().material.color = Color.red;
+        //owner.GetComponent<MeshRenderer>().material.color = Color.red;
     }
     public override void UpdateState(float deltaTime)
     {
@@ -50,5 +50,10 @@ public class OnFire : State {
         {
             owner.Die();
         }
+    }
+    public override void OnStateExit()
+    {
+        base.OnStateExit();
+        GameObject.Destroy(owner.fireInstance);
     }
 }
