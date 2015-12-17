@@ -5,13 +5,10 @@ using System.Collections.Generic;
 
 public class TendrilNode : MonoBehaviour
 {
-    protected static GameController theGameController;
+    protected static GameController gameController;
     protected AudioSource mAudioSource;
     public GameObject nodeFirePrefab;
     public GameObject fireInstance;
-
-    public GameObject nodeDeathPrefab;
-    public GameObject deathInstance;
 
     public MeshMaker mainMeshMaker;
     public MeshMaker sideMeshMaker;
@@ -24,15 +21,6 @@ public class TendrilNode : MonoBehaviour
     {
         sideMeshMaker.UpdateMesh(newPosition, up);
     }
-
-    private Color deadColor_ = new Color(0.3f, 0.3f, 0.3f);
-    public Color deadColor
-    {
-        get
-        {
-            return deadColor_;
-        }
-    } 
 
     protected State mState;
     protected Type state
@@ -78,24 +66,15 @@ public class TendrilNode : MonoBehaviour
     public void Die()
     {
         SetState(new Dead(this));
-        theGameController.GetComponent<SplitscreenAudioListener>().UnregisterAudioSource(mAudioSource);
+
         if(fireInstance != null)
         {
-            Destroy(fireInstance);
-        }
-        if (nodeDeathPrefab != null && deathInstance == null)
-        {
-            deathInstance = Instantiate(nodeDeathPrefab);
-            deathInstance.transform.position = transform.position + Vector3.back;
-            deathInstance.transform.SetParent(this.transform);
+            fireInstance.GetComponent<ParticleSystem>().Stop();
+            Destroy(fireInstance, 0.5f);
         }
     }
     void OnDestroy()
     {
-        if (deathInstance != null)
-        {
-            Destroy(deathInstance);
-        }
         if (fireInstance != null)
         {
             Destroy(fireInstance);
@@ -124,11 +103,11 @@ public class TendrilNode : MonoBehaviour
     }
     protected virtual void Start()
     {
-        if (theGameController == null)
+        if (gameController == null)
         {
-            theGameController = GameObject.FindObjectOfType<GameController>();  
+            gameController = GameObject.FindObjectOfType<GameController>();  
         }
-        SplitscreenAudioListener volumeAdjuster = theGameController.GetComponent<SplitscreenAudioListener>();
+        SplitscreenAudioListener volumeAdjuster = gameController.GetComponent<SplitscreenAudioListener>();
         if (volumeAdjuster)
         {
             volumeAdjuster.RegisterAudioSource(mAudioSource);
@@ -145,7 +124,10 @@ public class TendrilNode : MonoBehaviour
         {
             foreach (TendrilNode t in children)
             {
-                Debug.DrawLine(transform.position, t.GetPosition(), Color.blue);
+                if(t != null)
+                {
+                    Debug.DrawLine(transform.position, t.GetPosition(), Color.blue);
+                }
             }
             if (parent != null)
             {

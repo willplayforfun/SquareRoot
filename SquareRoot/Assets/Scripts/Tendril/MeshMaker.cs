@@ -30,11 +30,11 @@ public class MeshMaker : MonoBehaviour
         {
             if (this.GetType() == typeof(TendrilRoot))
             {
-                UpdateMesh(transform.position, -transform.up);
+                UpdateMesh(transform.position, transform.up);
             }
             else
             {
-                UpdateMesh(transform.position, transform.up);
+                UpdateMesh(transform.position, -transform.up);
 
             }
         }
@@ -80,10 +80,10 @@ public class MeshMaker : MonoBehaviour
             tris.Add(end - 1);
         }
 
-        //tendrilMesh.SetVertices(vertices);
-        //tendrilMesh.uv = uvs.ToArray();
-        //tendrilMesh.normals = normals.ToArray();
-        //tendrilMesh.triangles = tris.ToArray();
+        tendrilMesh.SetVertices(vertices);
+        tendrilMesh.uv = uvs.ToArray();
+        tendrilMesh.normals = normals.ToArray();
+        tendrilMesh.triangles = tris.ToArray();
 
         tendrilMesh.RecalculateNormals();
         tendrilMesh.RecalculateBounds();
@@ -109,7 +109,7 @@ public class MeshMaker : MonoBehaviour
                 vertices[i] = Vector3.Lerp(vertices[i], average, progress);
                 vertices[i + 1] = Vector3.Lerp(vertices[i + 1], average, progress);
 
-                //tendrilMesh.SetVertices(vertices);
+                tendrilMesh.SetVertices(vertices);
             }
 
             yield return null;

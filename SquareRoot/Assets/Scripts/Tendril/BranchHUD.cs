@@ -56,21 +56,31 @@ public class BranchHUD : MonoBehaviour
 
     public void SetAngle(Vector2 dir)
     {
+        //Debug.Log("setting angle "+dir);
         if(dir.magnitude > 0.5f)
         {
             lastAngle = dir;
             lastAngleChange = Time.time;
             foreach (LineRenderer renderer in extentsRenderers)
             {
-                renderer.enabled = true;
+                if (renderer != null)
+                {
+                    renderer.enabled = true;
+                }
             }
-            dirRenderer.enabled = true;
+            if (dirRenderer != null)
+            {
+                dirRenderer.enabled = true;
+            }
         }
         else
         {
             foreach (LineRenderer renderer in extentsRenderers)
             {
-                renderer.enabled = false;
+                if(renderer != null)
+                {
+                    renderer.enabled = false;
+                }
             }
         }
         /*

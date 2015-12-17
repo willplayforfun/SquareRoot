@@ -45,7 +45,7 @@ public class Growing : State
         if (nodeDropRate - timeSinceNodeDropped * growthRate <= 0)
         {
             timeSinceNodeDropped = 0;
-            ownerTip.CreateNewNode();
+            //ownerTip.CreateNewNode();
         }
     }
 }

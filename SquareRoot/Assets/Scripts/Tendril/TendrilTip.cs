@@ -62,11 +62,11 @@ public class TendrilTip : TendrilNode
             // update mesh
             if(mainTip)
             {
-                //meshRoot.UpdateMainMesh(transform.position, -transform.up);
+                meshRoot.UpdateMainMesh(transform.position, -transform.up);
             }
             else
             {
-                //meshRoot.UpdateSideMesh(transform.position, -transform.up);
+                meshRoot.UpdateSideMesh(transform.position, -transform.up);
             }
         }
     }
@@ -103,7 +103,7 @@ public class TendrilTip : TendrilNode
             meshRoot = parentNode;
 
             growDirection = newDirection;
-            mAudioSource.PlayOneShot(theGameController.SplitSound);
+            mAudioSource.PlayOneShot(gameController.SplitSound);
         }
     }
 
@@ -155,25 +155,25 @@ public class TendrilTip : TendrilNode
                     if (typeof(OnFire) != mState.GetType())
                     {
                         CatchFire();
-                        if (mAudioSource && theGameController.OnFireSound)
+                        if (mAudioSource && gameController.OnFireSound)
                         {
-                            mAudioSource.PlayOneShot(theGameController.OnFireSound);
+                            mAudioSource.PlayOneShot(gameController.OnFireSound);
                         }
                         if (hud != null) hud.Hide();
                     }
                     break;
                 case Layers.Resources:
                     SetState(new Leeching(this, collision.gameObject));
-                    if (mAudioSource && theGameController.LeechingSound)
+                    if (mAudioSource && gameController.LeechingSound)
                     {
-                        mAudioSource.PlayOneShot(theGameController.LeechingSound);
+                        mAudioSource.PlayOneShot(gameController.LeechingSound);
                     }
                     if (hud != null) hud.Hide();
                     break;
                 case Layers.Rock:
                     SetState(new Alive(this));
-                    if (mAudioSource && theGameController.HitRockSound)
-                        mAudioSource.PlayOneShot(theGameController.HitRockSound);
+                    if (mAudioSource && gameController.HitRockSound)
+                        mAudioSource.PlayOneShot(gameController.HitRockSound);
                     if(hud != null) hud.Hide();
                     break;
                 case Layers.Tendril:
@@ -183,9 +183,9 @@ public class TendrilTip : TendrilNode
                         if (node.IsOnFire())
                         {
                             CatchFire();
-                            if (mAudioSource && theGameController.OnFireSound)
+                            if (mAudioSource && gameController.OnFireSound)
                             {
-                                mAudioSource.PlayOneShot(theGameController.OnFireSound);
+                                mAudioSource.PlayOneShot(gameController.OnFireSound);
                             }
                         }
                         else

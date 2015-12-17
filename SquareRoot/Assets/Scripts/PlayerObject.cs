@@ -37,7 +37,10 @@ public class PlayerObject : MonoBehaviour
     private float timeActive = 0f;
 
     // how often new tendrils are created
-    public float tendrilSpawnPeriod = 12.0f;
+    public float tendrilSpawnPeriodMin = 10.0f;
+    public float tendrilSpawnPeriodMax = 14.0f;
+    public float noTendrilsSpawnPeriod = 2f;
+    private float nextScheduledTendril;
     private float lastTendrilSpawn;
 
     SpawnPoint[] mSpawnPoints;
@@ -161,6 +164,7 @@ public class PlayerObject : MonoBehaviour
     public void SpawnTendril()
     {
         lastTendrilSpawn = Time.time;
+        nextScheduledTendril = Time.time + Random.Range(tendrilSpawnPeriodMin, tendrilSpawnPeriodMax);
 
         int attempts = 0;
         int index = Random.Range(0, mSpawnPoints.Length);
@@ -344,7 +348,7 @@ public class PlayerObject : MonoBehaviour
             //resourceCount += 0.5f * Time.deltaTime;
 
             // spawn new tendril 
-            if (Time.time - lastTendrilSpawn > tendrilSpawnPeriod)
+            if (Time.time > nextScheduledTendril || (activeRootIndex < 0 && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod))
             {
                 Debug.Log("Spawning New Tendril");
                 SpawnTendril();
@@ -375,6 +379,7 @@ public class PlayerObject : MonoBehaviour
                         Debug.Log(number.ToString() + " player released Action 1 (branch).");
                         //activeRoot.EndBranch();
                     }
+                    Debug.Log(inputDevice.LeftStick.Vector);
                     activeRoot.BranchAim(playerCamera.transform.TransformDirection(inputDevice.LeftStick.Vector));
 
                     // cutting
