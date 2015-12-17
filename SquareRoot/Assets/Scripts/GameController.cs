@@ -16,20 +16,8 @@ public class GameController : MonoBehaviour
     public PlayerObject playerPrefab;
     List<PlayerObject> players;
 
-    public AudioClip OnFireSound;
-    public AudioClip HitRockSound;
-    public AudioClip NewBranchSound;
-    public AudioClip SplitSound;
-    public AudioClip LeechingSound;
-    public AudioClip SelectSound;
-    public AudioClip BackSound;
-    public AudioClip BackgroundMusic;
-    public AudioClip DrawSound;
-    public AudioClip ElimSound;
-    public AudioClip VictorySound;
-    public AudioClip CutSound;
+    bool musicIsPlaying;
 
-    bool musicIsPlaying = false;
     private bool paused;
     public void TogglePause(bool showMenu = true)
     {
@@ -157,14 +145,14 @@ public class GameController : MonoBehaviour
             Debug.LogFormat("Match concluded, {0} player was winner", winner.number.ToString());
             ui.SetVictoryText(winner.number);
             TogglePause(showMenu: false);
-            GetComponent<AudioSource>().PlayOneShot(VictorySound);
+            GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.VictorySound);
         }
         else
         {
             Debug.Log("Match concluded as a draw");
             ui.SetDrawText();
             TogglePause(showMenu: false);
-            GetComponent<AudioSource>().PlayOneShot(DrawSound);
+            GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.DrawSound);
         }
 
         StartCoroutine("DisplayGameOverMenu");

@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Alive : State
+namespace TapRoot.Tendril
 {
-    public Alive(TendrilNode obj)
-          : base(obj)
+    public class Alive : TendrilNodeState
     {
-        
+        public Alive(TendrilNode obj)
+              : base(obj)
+        {
+
+        }
     }
 }

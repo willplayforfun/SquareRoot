@@ -19,7 +19,7 @@ public class SplitscreenAudioListener : MonoBehaviour {
     {
         foreach (PlayerObject player in GameObject.FindObjectsOfType<PlayerObject>())
         {
-            playerCameras.Add(player.camera.transform);
+            playerCameras.Add(player.playerCamera.transform);
         }
     }
 

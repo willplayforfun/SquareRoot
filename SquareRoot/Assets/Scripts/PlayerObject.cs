@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using InControl;
+using TapRoot.Tendril;
 
 public enum PlayerNum
 {
@@ -15,10 +16,10 @@ public class PlayerObject : MonoBehaviour
     public void Lose()
     {
         alive_ = false;
-        playerCamera.GetComponent<FollowingCamera>().ApplyShock(8);
+        playerCamera_.GetComponent<FollowingCamera>().ApplyShock(8);
         FocusOnMap();
-        playerCamera.orthographicSize = zoomTarget;
-        GetComponent<AudioSource>().PlayOneShot(gameController.ElimSound);
+        playerCamera_.orthographicSize = zoomTarget;
+        GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.ElimSound);
     }
 
     public float startingResourceCount = 5;
@@ -52,12 +53,12 @@ public class PlayerObject : MonoBehaviour
     GameController gameController;
 
     // Player camera for zooming and splitscreening
-    Camera playerCamera;
-    public Camera camera
+    Camera playerCamera_;
+    public Camera playerCamera
     {
         get
         {
-            return playerCamera;
+            return playerCamera_;
         }
     }
     //minimap camera
@@ -125,7 +126,7 @@ public class PlayerObject : MonoBehaviour
 
     void Awake()
     {
-        playerCamera = GetComponentInChildren<Camera>();
+        playerCamera_ = GetComponentInChildren<Camera>();
         gameController = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<GameController>();
 
         FocusOnPlayer();
@@ -144,7 +145,7 @@ public class PlayerObject : MonoBehaviour
             {
                 currentTendrilIndicator.rotation = spawn.transform.rotation;
                 transform.position = spawn.transform.position;
-                playerCamera.transform.rotation = spawn.transform.rotation;
+                playerCamera_.transform.rotation = spawn.transform.rotation;
                 mSpawnPoints = spawn.spawnPoints;
             }
         }
@@ -232,7 +233,7 @@ public class PlayerObject : MonoBehaviour
         if(goAhead)
         {
             currentFocus = FocusState.Tip;
-            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].activeTip.transform, maintainOffset: false);
+            playerCamera_.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].activeTip.transform, maintainOffset: false);
             zoomTarget = previousZoom;
         }
     }
@@ -247,7 +248,7 @@ public class PlayerObject : MonoBehaviour
             }
 
             currentFocus = FocusState.Root;
-            playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
+            playerCamera_.GetComponent<FollowingCamera>().SetTrackingTarget(roots[activeRootIndex].transform, maintainOffset: false);
             zoomTarget = playerZoomLevel;
         }
         else
@@ -264,7 +265,7 @@ public class PlayerObject : MonoBehaviour
         }
 
         currentFocus = FocusState.Player;
-        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(this.transform, maintainOffset: false);
+        playerCamera_.GetComponent<FollowingCamera>().SetTrackingTarget(this.transform, maintainOffset: false);
 
         currentTendrilIndicator.gameObject.SetActive(false);
         zoomTarget = playerZoomLevel;
@@ -279,8 +280,8 @@ public class PlayerObject : MonoBehaviour
 
         currentFocus = FocusState.Map;
 
-        playerCamera.GetComponent<FollowingCamera>().SetTrackingTarget(null);
-        playerCamera.transform.position = new Vector3(0, 0, playerCamera.transform.position.z);
+        playerCamera_.GetComponent<FollowingCamera>().SetTrackingTarget(null);
+        playerCamera_.transform.position = new Vector3(0, 0, playerCamera_.transform.position.z);
         zoomTarget = mapZoomLevel;
     }
 
@@ -379,8 +380,7 @@ public class PlayerObject : MonoBehaviour
                         Debug.Log(number.ToString() + " player released Action 1 (branch).");
                         //activeRoot.EndBranch();
                     }
-                    Debug.Log(inputDevice.LeftStick.Vector);
-                    activeRoot.BranchAim(playerCamera.transform.TransformDirection(inputDevice.LeftStick.Vector));
+                    activeRoot.BranchAim(playerCamera_.transform.TransformDirection(inputDevice.LeftStick.Vector));
 
                     // cutting
                     if (inputDevice.Action2.WasPressed)
@@ -394,7 +394,7 @@ public class PlayerObject : MonoBehaviour
                     }
 
                     // accelerate growth
-                    if (false)//(inputDevice.LeftBumper.IsPressed || inputDevice.RightBumper.IsPressed || inputDevice.LeftTrigger.IsPressed || inputDevice.RightTrigger.IsPressed)
+                    if (inputDevice.Action4.IsPressed)
                     {
                         Debug.Log(number.ToString() + " player accelerating growth.");
                         activeRoot.AccelerateGrowth();
@@ -426,38 +426,12 @@ public class PlayerObject : MonoBehaviour
                 }
                 if (inputDevice.Action3.IsPressed || inputDevice.LeftTrigger.IsPressed)
                 {
-                    //bool goRight = false;
-                    //bool goLeft = false;
-                    bool goLeft = inputDevice.LeftStickLeft.WasPressed;
-                    bool goRight = inputDevice.LeftStickRight.WasPressed;
-                    /*
-                    switch(number)
-                    {
-                        case PlayerNum.First:
-                            goLeft = inputDevice.LeftStickLeft.WasPressed || inputDevice.LeftTrigger.WasPressed;
-                            goRight = inputDevice.LeftStickRight.WasPressed || inputDevice.RightTrigger.WasPressed;
-                            break;
-                        case PlayerNum.Second:
-                            goLeft = inputDevice.LeftStickUp.WasPressed;
-                            goRight = inputDevice.LeftStickDown.WasPressed;
-                            break;
-                        case PlayerNum.Third:
-                            goLeft = inputDevice.LeftStickRight.WasPressed;
-                            goRight = inputDevice.LeftStickLeft.WasPressed;
-                            break;
-                        case PlayerNum.Fourth:
-                            goLeft = inputDevice.LeftStickDown.WasPressed;
-                            goRight = inputDevice.LeftStickUp.WasPressed;
-                            break;
-                    }
-                    */
-
-                    if (goRight)
+                    if (inputDevice.LeftStickRight.WasPressed)
                     {
                         // go to next right tendril
                         GoToNextRightTendril();
                     }
-                    if (goLeft)
+                    if (inputDevice.LeftStickLeft.WasPressed)
                     {
                         // go to next left tendril
                         GoToNextLeftTendril();
@@ -485,7 +459,7 @@ public class PlayerObject : MonoBehaviour
                 }
             }
 
-            playerCamera.orthographicSize = Mathf.Lerp(playerCamera.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
+            playerCamera_.orthographicSize = Mathf.Lerp(playerCamera_.orthographicSize, zoomTarget, Time.deltaTime / 0.3f);
 
             //Personal Minimap code:
             //GameObject minimapTrackingTransformHolder = Instantiate<GameObject> 
@@ -525,46 +499,46 @@ public class PlayerObject : MonoBehaviour
             case PlayerNum.First:
                 if (numPlayers == 1)
                 {
-                    playerCamera.rect = new Rect(0, 0, 1, 1);
+                    playerCamera_.rect = new Rect(0, 0, 1, 1);
                     minCameraSize *= 0.25f;
                 }
                 else if (numPlayers < 4)
                 {
-                    playerCamera.rect = new Rect(0, 0.5f, 1, 0.5f);
+                    playerCamera_.rect = new Rect(0, 0.5f, 1, 0.5f);
                     minCameraSize *= 0.5f;
                 }
                 else
                 {
-                    playerCamera.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Second:
                 if (numPlayers == 2)
                 {
-                    playerCamera.rect = new Rect(0, 0, 1, 0.5f);
+                    playerCamera_.rect = new Rect(0, 0, 1, 0.5f);
                     minCameraSize *= 0.5f;
                 }
                 else if (numPlayers == 3)
                 {
-                    playerCamera.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0, 0, 0.5f, 0.5f);
                 }
                 else if (numPlayers == 4)
                 {
-                    playerCamera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Third:
                 if (numPlayers == 4)
                 {
-                    playerCamera.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0, 0, 0.5f, 0.5f);
                 }
                 else
                 {
-                    playerCamera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Fourth:
-                playerCamera.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                playerCamera_.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
                 break;
         }
     }

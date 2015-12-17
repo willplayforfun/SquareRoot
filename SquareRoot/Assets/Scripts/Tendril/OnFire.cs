@@ -1,59 +1,75 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class OnFire : State {
-
-    /**
-     * State for nodes that are on fire
-     * Fire begins to spread in timeUntilFireSpread seconds
-     * Node's state becomes "Dead" in timeUntilFireOut seconds from fire's start
-     */
-    static float timeUntilFireSpread = 1.0f;
-    static float timeUntilFireOut = 6.0f;
-
-    private bool haveSpreadFire;
-
-    public OnFire(TendrilNode obj)
-           : base(obj)
+namespace TapRoot.Tendril
+{
+    public class OnFire : TendrilNodeState
     {
 
-    }
+        /**
+         * State for nodes that are on fire
+         * Fire begins to spread in timeUntilFireSpread seconds
+         * Node's state becomes "Dead" in timeUntilFireOut seconds from fire's start
+         */
+        static float fireSpreadRate = 4.0f;
+        static float timeUntilFireOut = 6.0f;
 
-    public override void OnStateEnter()
-    {
-        base.OnStateEnter();
+        private List<float> spreadProgressToNeighbors;
+        private List<float> distanceToNeighbors;
 
-        //owner.GetComponent<MeshRenderer>().material.color = Color.red;
-    }
-    public override void UpdateState(float deltaTime)
-    {
-        base.UpdateState(deltaTime);
-
-        //Debug.Log("AAHHHH BURNING " + owner.GetPosition());
-
-        // spread fire once after a time
-        if (timeInState > timeUntilFireSpread && !haveSpreadFire)
+        public OnFire(TendrilNode obj)
+               : base(obj)
         {
-            haveSpreadFire = true;
+            spreadProgressToNeighbors = new List<float>();
+            distanceToNeighbors = new List<float>();
 
-            // spread to all neighbors, up or down
             foreach (TendrilNode neighbor in owner.GetNeighbors())
             {
-                // if it's dead or burning, won't catch fire again
-                neighbor.CatchFire();
-                Debug.Log("Fire Spreading to " + neighbor.GetPosition());
+                distanceToNeighbors.Add(Vector3.Distance(owner.transform.position, neighbor.transform.position));
+                spreadProgressToNeighbors.Add(0);
             }
         }
 
-        // stop burning
-        if (timeInState > timeUntilFireOut)
+        internal override void OnStateEnter()
         {
-            owner.Die();
+            base.OnStateEnter();
+
+            if (owner.nodeFirePrefab != null && owner.fireInstance == null)
+            {
+                owner.fireInstance = GameObject.Instantiate(owner.nodeFirePrefab);
+                owner.fireInstance.transform.position = owner.transform.position + Vector3.back;
+                owner.fireInstance.transform.SetParent(owner.transform);
+            }
         }
-    }
-    public override void OnStateExit()
-    {
-        base.OnStateExit();
-        GameObject.Destroy(owner.fireInstance);
+        internal override void UpdateState(float deltaTime)
+        {
+            base.UpdateState(deltaTime);
+
+            for (int i = 0; i < spreadProgressToNeighbors.Count; i++)
+            {
+                if (spreadProgressToNeighbors[i] / distanceToNeighbors[i] > 1f)
+                {
+                    owner.GetNeighbors()[i].CatchFire();
+                }
+                else
+                {
+                    spreadProgressToNeighbors[i] += fireSpreadRate * deltaTime;
+
+                    // TODO update mesh and effects and stuff
+                    Debug.DrawLine(owner.transform.position, owner.transform.position + (owner.GetNeighbors()[i].transform.position - owner.transform.position).normalized * spreadProgressToNeighbors[i]);
+                }
+            }
+
+            // stop burning
+            if (timeInState > timeUntilFireOut)
+            {
+                owner.Die();
+            }
+        }
+        internal override void OnStateExit()
+        {
+            base.OnStateExit();
+            GameObject.Destroy(owner.fireInstance);
+        }
     }
 }

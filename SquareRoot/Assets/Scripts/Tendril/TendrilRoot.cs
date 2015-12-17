@@ -1,65 +1,68 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class TendrilRoot : TendrilNode
+namespace TapRoot.Tendril
 {
-    public TendrilTip activeTip;
-    public PlayerObject player;
+    public class TendrilRoot : TendrilNode
+    {
+        public TendrilTip activeTip;
+        public PlayerObject player;
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-    protected override void Start()
-    {
-        base.Start();
-        
-        activeTip.growDirection = transform.up;
-        activeTip.SetParent(this);
-        AddChild(activeTip);
-        activeTip.meshRoot = this;
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+        protected override void Start()
+        {
+            base.Start();
 
-        onFireIndicator.SetActive(false);
-        GetComponent<AudioSource>().PlayOneShot(gameController.NewBranchSound);
-    }
+            activeTip.growDirection = transform.up;
+            activeTip.SetParent(this);
+            AddChild(activeTip);
+            activeTip.meshRoot = this;
 
-    public override void AddResources(float amount)
-    {
-        player.AddResources(amount);
-    }
+            onFireIndicator.SetActive(false);
+            GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.NewBranchSound);
+        }
 
-    // input functions (called into by PlayerObject)
-    public void StartBranch()
-    {
-        activeTip.StartBranch();
-    }
-    public void EndBranch()
-    {
-        activeTip.EndBranch();
-    }
-    public void BranchAim(Vector2 input)
-    {
-        activeTip.BranchAim(input);
-    }
+        public override void AddResources(float amount)
+        {
+            player.AddResources(amount);
+        }
 
-    public void CutTendril()
-    {
-        Die();
-        onFireIndicator.SetActive(false);
-        GetComponent<AudioSource>().PlayOneShot(gameController.CutSound);
-    }
+        // input functions (called into by PlayerObject)
+        public void StartBranch()
+        {
+            activeTip.StartBranch();
+        }
+        public void EndBranch()
+        {
+            activeTip.EndBranch();
+        }
+        public void BranchAim(Vector2 input)
+        {
+            activeTip.BranchAim(input);
+        }
 
-    public override void CatchFire()
-    {
-        base.CatchFire();
-        player.Lose();
-    }
+        public void CutTendril()
+        {
+            Die();
+            onFireIndicator.SetActive(false);
+            GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.CutSound);
+        }
 
-    public GameObject onFireIndicator;
+        public override void CatchFire()
+        {
+            base.CatchFire();
+            player.Lose();
+        }
 
-    public void TipCaughtFire()
-    {
-        onFireIndicator.SetActive(true);
-        player.TendrilCaughtOnFire();
+        public GameObject onFireIndicator;
+
+        public void TipCaughtFire()
+        {
+            onFireIndicator.SetActive(true);
+            player.TendrilCaughtOnFire();
+        }
     }
 }

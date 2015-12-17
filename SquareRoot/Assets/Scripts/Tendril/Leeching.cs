@@ -1,35 +1,43 @@
 ﻿using UnityEngine;
 
-public class Leeching : State
+namespace TapRoot.Tendril
 {
-    ResourcePool pool;
-
-    public Leeching(TendrilNode obj, GameObject foodPool)
-             : base(obj)
+    public class Leeching : TendrilNodeState
     {
-        pool = foodPool.GetComponent<ResourcePool>();
-    }
+        ResourcePool pool;
 
-    public override void OnStateEnter()
-    {
-        base.OnStateEnter();
-
-        if(pool != null)
+        public Leeching(TendrilNode obj, GameObject foodPool)
+                 : base(obj)
         {
-            pool.Feed += owner.AddResources;
+            pool = foodPool.GetComponent<ResourcePool>();
         }
-    }
-    public override void UpdateState(float deltaTime)
-    {
-        base.UpdateState(deltaTime);
-    }
-    public override void OnStateExit()
-    {
-        base.OnStateExit();
 
-        if (pool != null)
+        internal override void OnStateEnter()
         {
-            pool.Feed -= owner.AddResources;
+            base.OnStateEnter();
+
+            if (owner.GetComponent<AudioSource>() && AudioClipManager.instance.LeechingSound)
+            {
+                owner.GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.LeechingSound);
+            }
+
+            if (pool != null)
+            {
+                pool.Feed += owner.AddResources;
+            }
+        }
+        internal override void UpdateState(float deltaTime)
+        {
+            base.UpdateState(deltaTime);
+        }
+        internal override void OnStateExit()
+        {
+            base.OnStateExit();
+
+            if (pool != null)
+            {
+                pool.Feed -= owner.AddResources;
+            }
         }
     }
 }

@@ -49,18 +49,12 @@ public class BranchHUD : MonoBehaviour
         dirRenderer.enabled = false;
     }
 
-    private Vector2 lastAngle;
-    private float lastAngleChange;
-
     public float timeToDisappear = 1f;
 
     public void SetAngle(Vector2 dir)
     {
-        //Debug.Log("setting angle "+dir);
         if(dir.magnitude > 0.5f)
         {
-            lastAngle = dir;
-            lastAngleChange = Time.time;
             foreach (LineRenderer renderer in extentsRenderers)
             {
                 if (renderer != null)
@@ -83,20 +77,7 @@ public class BranchHUD : MonoBehaviour
                 }
             }
         }
-        /*
-        foreach (LineRenderer renderer in extentsRenderers)
-        {
-            renderer.material.color = Color.Lerp(Color.white, new Color(1,1,1,0), (Time.time - lastAngleChange) / timeToDisappear);
-        }
-
-        if (Time.time - lastAngleChange > timeToDisappear)
-        {
-            foreach (LineRenderer renderer in extentsRenderers)
-            {
-                renderer.enabled = false;
-            }
-        }
-        */
+        
         if (dirRenderer != null)
         {
             dirRenderer.SetVertexCount(2);

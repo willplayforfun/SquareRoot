@@ -1,51 +1,74 @@
 ﻿using UnityEngine;
 
-public class Growing : State
+namespace TapRoot.Tendril
 {
-    // reference to cast owner
-    private TendrilTip ownerTip;
-    
-    public float timeSinceNodeDropped;
-
-    public Growing(TendrilNode obj) : base(obj)
+    public class Growing : TendrilNodeState
     {
-        ownerTip = ((TendrilTip)owner);
-    }
-    public override void OnStateEnter()
-    {
-        base.OnStateEnter();
+        // reference to cast owner
+        private TendrilTip ownerTip;
 
-        owner.GetComponent<BoxCollider2D>().enabled = false;
-        owner.GetComponent<CircleCollider2D>().enabled = false;
-    }
-    public override void UpdateState(float deltaTime)
-    {
-        base.UpdateState(deltaTime);
-
-        float growthRate = ownerTip.growthRate;
-        float nodeDropRate = ownerTip.nodeDropRate;
-        Vector2 growDirection = ownerTip.growDirection;
-
-        // one-time collision re-enable
-        if (timeInState > 0.5f * 1f / nodeDropRate)
+        private float timeSinceNodeDropped;
+        public float timeSinceBranch
         {
-            owner.GetComponent<BoxCollider2D>().enabled = true;
-            owner.GetComponent<CircleCollider2D>().enabled = true;
+            get
+            {
+                return timeSinceNodeDropped;
+            }
         }
+        private float lastVertexDrop;
 
-        // grow
-        timeSinceNodeDropped += deltaTime;
-        owner.transform.position += (Vector3)(growthRate * deltaTime * growDirection);
+        public Growing(TendrilNode obj) : base(obj)
+        {
+            ownerTip = ((TendrilTip)owner);
+        }
+        internal override void OnStateEnter()
+        {
+            base.OnStateEnter();
 
-        // update collider
-        owner.GetComponent<BoxCollider2D>().size = new Vector2(1, timeSinceNodeDropped * growthRate);
-        owner.GetComponent<BoxCollider2D>().offset = new Vector2(0, -0.5f * timeSinceNodeDropped * growthRate);
-
-        // if reached nodeDropRate distance since last node, make a new node
-        if (nodeDropRate - timeSinceNodeDropped * growthRate <= 0)
+            ownerTip.newBranchCreated += NewBranchCreatedCallback;
+        }
+        private void NewBranchCreatedCallback()
         {
             timeSinceNodeDropped = 0;
-            //ownerTip.CreateNewNode();
+        }
+        internal override void UpdateState(float deltaTime)
+        {
+            base.UpdateState(deltaTime);
+
+            // local variables for ease of reference
+            float growthRate = ownerTip.growthRate;
+            Vector2 growDirection = ownerTip.growDirection;
+
+            // grow
+            timeSinceNodeDropped += deltaTime;
+            owner.transform.position += (Vector3)(growthRate * deltaTime * growDirection);
+
+            // update collider
+            ownerTip.tendrilCollider.size = new Vector2(1, 2f * timeSinceNodeDropped * growthRate);
+            ownerTip.tendrilCollider.offset = new Vector2(0, -1f * timeSinceNodeDropped * growthRate);
+
+            if (Time.time - lastVertexDrop > 0.2f && ownerTip.meshRoot != null)
+            {
+                lastVertexDrop = Time.time;
+                // update mesh
+                if (ownerTip.mainTip)
+                {
+                    ownerTip.meshRoot.UpdateMainMesh(owner.transform.position, -owner.transform.up);
+                }
+                else
+                {
+                    ownerTip.meshRoot.UpdateSideMesh(owner.transform.position, -owner.transform.up);
+                }
+            }
+        }
+        internal override void OnStateExit()
+        {
+            if (ownerTip.hud != null)
+            {
+                ownerTip.hud.Hide();
+            }
+
+            ownerTip.newBranchCreated -= NewBranchCreatedCallback;
         }
     }
 }
