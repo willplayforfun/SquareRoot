@@ -13,7 +13,7 @@ namespace TapRoot.Tendril
         public GameObject minimapVis;
 
         public GameObject nodeFirePrefab;
-        internal GameObject fireInstance;
+        internal List<GameObject> fireInstances;
 
         public MeshMaker mainMeshMaker;
         public MeshMaker sideMeshMaker;
@@ -89,6 +89,7 @@ namespace TapRoot.Tendril
             children = new List<TendrilNode>();
             SetState(new Alive(this));
             mAudioSource = GetComponent<AudioSource>();
+            fireInstances = new List<GameObject>();
         }
         protected virtual void Start()
         {

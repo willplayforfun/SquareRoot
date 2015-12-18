@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
     public float startBuffer = 10;
     public float resourceRate = 1f;
+    public float GameStartDelay = 5.0f;
     public float GameEndDelay = 2.0f; // Time Between Game Ending and Game Over screen showing
 
     [Space(12)]
@@ -42,12 +43,13 @@ public class GameController : MonoBehaviour
     }
 
     private bool matchOngoing;
+    private bool matchStarted;
     private float matchStart;
     public int requiredResources
     {
         get
         {
-            return Mathf.FloorToInt(resourceRate * (Time.time - matchStart - startBuffer));
+            return Mathf.FloorToInt(resourceRate * (Time.time - matchStart - startBuffer - GameStartDelay));
         }
     }
 
@@ -80,6 +82,8 @@ public class GameController : MonoBehaviour
             player.SetPlayerNumber(jsc.playerList[i].number, numPlayers);
             players.Add(player);
 
+            player.gameDisabled = true;
+
             if (numPlayers < 2)
             {
                 player.debug = true;
@@ -88,14 +92,35 @@ public class GameController : MonoBehaviour
 
         paused = false;
         matchStart = Time.time;
-        matchOngoing = true;
+        matchOngoing = false;
+        matchStarted = false;
 
-        // start music
-        GetComponent<AudioSource>().Play();
+        foreach (PlayerObject player in players)
+        {
+            player.ui.StartCountdown(GameStartDelay);
+        }
     }
 
     void Update()
     {
+        if(!matchStarted)
+        {
+            if(Time.time - matchStart > GameStartDelay)
+            {
+                matchStarted = true;
+                matchOngoing = true;
+
+                foreach (PlayerObject player in players)
+                {
+                    player.gameDisabled = false;
+                    player.StartGame();
+                }
+
+                // start music
+                GetComponent<AudioSource>().Play();
+            }
+        }
+
         if (matchOngoing)
         {
             // win condition check

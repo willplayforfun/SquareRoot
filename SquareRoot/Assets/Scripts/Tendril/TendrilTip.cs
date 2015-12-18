@@ -8,6 +8,18 @@ namespace TapRoot.Tendril
 
         internal float minimapVisWidth = 5f;
 
+        public GameObject selectedMarker;
+        public bool selected
+        {
+            set
+            {
+                if(selectedMarker != null)
+                {
+                    selectedMarker.SetActive(value);
+                }
+            }
+        }
+
         // reference to the tendril base node
         [SerializeField]
         private TendrilRoot tendrilRoot;
@@ -42,6 +54,7 @@ namespace TapRoot.Tendril
         {
             base.Awake();
             SetState(new Growing(this));
+            selected = false;
         }
         protected override void Start()
         {

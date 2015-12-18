@@ -58,6 +58,8 @@ public class PlayerUI : MonoBehaviour
     public GameObject newTendrilNotification;
     public GameObject fireNotification;
 
+    public Countdown startTimer;
+
     public float offsetFromEdge = 20;
 
     void Start()
@@ -77,6 +79,11 @@ public class PlayerUI : MonoBehaviour
     {
         loseText.enabled = true;
         vignetteColor = Color.black;
+    }
+
+    public void StartCountdown(float amount)
+    {
+        startTimer.StartCountdown(amount);
     }
 
     void Update()
@@ -132,7 +139,8 @@ public class PlayerUI : MonoBehaviour
                 }
                 else if (numPlayers == 3)
                 {
-                    SetLowerLeft();
+                    SetUpperRight();
+                    //SetLowerLeft();
                 }
                 else if (numPlayers == 4)
                 {
@@ -146,7 +154,8 @@ public class PlayerUI : MonoBehaviour
                 }
                 else
                 {
-                    SetLowerRight();
+                    SetLowerLeft();
+                    //SetLowerRight();
                 }
                 break;
             case PlayerNum.Fourth:

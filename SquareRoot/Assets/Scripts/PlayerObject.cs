@@ -15,6 +15,8 @@ public class PlayerObject : MonoBehaviour
 {
     public bool debug;
 
+    public bool gameDisabled; // true during start and end times
+
     public void Lose()
     {
         alive_ = false;
@@ -127,7 +129,26 @@ public class PlayerObject : MonoBehaviour
     // all present tendrils, alive or dead (until they decompose)
     TendrilRoot[] roots;
     // index in roots list of current player-controlled root
-    int activeRootIndex;
+    int activeRootIndex_;
+    int activeRootIndex
+    {
+        get
+        {
+            return activeRootIndex_;
+        }
+        set
+        {
+            if (value >= 0 && roots[value] != null)
+            {
+                roots[value].activeTip.selected = true;
+            }
+            if(activeRootIndex_ >= 0 && roots[activeRootIndex_] != null)
+            { 
+                roots[activeRootIndex_].activeTip.selected = false;
+            }
+            activeRootIndex_ = value;
+        }
+    }
     private TendrilRoot activeRoot
     {
         get
@@ -147,9 +168,11 @@ public class PlayerObject : MonoBehaviour
 
         alive_ = true;
         resourceCount = startingResourceCount;
+
+        activeRootIndex_ = -1;
     }
 
-    void Start()
+    public void StartGame()
     {
         foreach (SpawnZone spawn in FindObjectsOfType<SpawnZone>())
         {
@@ -361,7 +384,8 @@ public class PlayerObject : MonoBehaviour
             //resourceCount += 0.5f * Time.deltaTime;
 
             // spawn new tendril 
-            if (Time.time > nextScheduledTendril || (currentFocus == FocusState.Player && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod))
+            if (!gameDisabled && (Time.time > nextScheduledTendril || 
+                                  (currentFocus == FocusState.Player && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod)))
             {
                 Debug.Log("Spawning New Tendril");
                 SpawnTendril();
@@ -376,7 +400,7 @@ public class PlayerObject : MonoBehaviour
 
             // handle input
 
-            if (alive && inputDevice != null)
+            if (alive && inputDevice != null && !gameDisabled)
             {
                 if (activeRootIndex >= 0 && activeRoot != null)
                 {
@@ -456,7 +480,7 @@ public class PlayerObject : MonoBehaviour
                 }
 
                 // pause
-                if (inputDevice.MenuWasPressed || (debug && Input.GetKeyDown(KeyCode.Escape)))// || !inputDevice.IsAttached)
+                if (!gameDisabled && (inputDevice.MenuWasPressed || (debug && Input.GetKeyDown(KeyCode.Escape))))// || !inputDevice.IsAttached)
                 {
                     Debug.Log(number.ToString() + " player pressed pause.");
                     gameController.TogglePause();
