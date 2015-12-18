@@ -179,7 +179,7 @@ public class PlayerObject : MonoBehaviour
         if (!sp.IsInUse())
         {
             TendrilRoot newRoot = Instantiate(tendrilPrefab);
-            newRoot.player = this;
+            newRoot.SetPlayer(this);
             newRoot.transform.position = sp.position;
             newRoot.transform.rotation = sp.rotation;
             sp.AttachRoot(newRoot);

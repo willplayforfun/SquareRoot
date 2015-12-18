@@ -25,15 +25,24 @@ namespace TapRoot.Tendril
         {
             base.OnStateEnter();
 
+            ownerTip.GetComponent<Collider2D>().enabled = false;
+
             ownerTip.newBranchCreated += NewBranchCreatedCallback;
         }
         private void NewBranchCreatedCallback()
         {
             timeSinceNodeDropped = 0;
+
+            ownerTip.GetComponent<Collider2D>().enabled = false;
         }
         internal override void UpdateState(float deltaTime)
         {
             base.UpdateState(deltaTime);
+
+            if(timeSinceNodeDropped > 0.05f)
+            {
+                ownerTip.GetComponent<Collider2D>().enabled = true;
+            }
 
             // local variables for ease of reference
             float growthRate = ownerTip.growthRate;
@@ -46,6 +55,11 @@ namespace TapRoot.Tendril
             // update collider
             ownerTip.tendrilCollider.size = new Vector2(1, 2f * timeSinceNodeDropped * growthRate);
             ownerTip.tendrilCollider.offset = new Vector2(0, -1f * timeSinceNodeDropped * growthRate);
+
+            // update minimap vis
+            ownerTip.minimapVis.transform.localScale = new Vector3(1, 2f * timeSinceNodeDropped * growthRate, 1);
+            ownerTip.minimapVis.transform.localPosition = new Vector3(0, - timeSinceNodeDropped * growthRate, 0);
+
 
             if (Time.time - lastVertexDrop > 0.2f && ownerTip.meshRoot != null)
             {

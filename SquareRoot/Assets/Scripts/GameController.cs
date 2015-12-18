@@ -78,7 +78,7 @@ public class GameController : MonoBehaviour
 
         if(numPlayers < 2)
         {
-            ui.minimap.SetActive(false);
+            //ui.minimap.SetActive(false);
         }
 
         // spawn requisite number of players and have them configure for split screen

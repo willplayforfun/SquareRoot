@@ -10,6 +10,8 @@ namespace TapRoot.Tendril
         protected GameController gameController;
         protected AudioSource mAudioSource;
 
+        public GameObject minimapVis;
+
         public GameObject nodeFirePrefab;
         internal GameObject fireInstance;
 

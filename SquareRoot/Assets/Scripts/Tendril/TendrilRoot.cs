@@ -6,7 +6,16 @@ namespace TapRoot.Tendril
     public class TendrilRoot : TendrilNode
     {
         public TendrilTip activeTip;
-        public PlayerObject player;
+
+        private PlayerObject player;
+        public void SetPlayer(PlayerObject newPlayer)
+        {
+            player = newPlayer;
+        }
+        internal PlayerNum GetPlayerNumber()
+        {
+            return player.number;
+        }
 
         protected override void Awake()
         {
@@ -20,6 +29,8 @@ namespace TapRoot.Tendril
             activeTip.SetParent(this);
             AddChild(activeTip);
             activeTip.meshRoot = this;
+
+            minimapVis.SetActive(false);
 
             onFireIndicator.SetActive(false);
             GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.NewBranchSound);

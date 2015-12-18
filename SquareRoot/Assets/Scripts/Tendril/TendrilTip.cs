@@ -7,8 +7,9 @@ namespace TapRoot.Tendril
         public bool mainTip = false;
 
         // reference to the tendril base node
-        public TendrilRoot tendrilRoot;
-        public TendrilNode meshRoot;
+        [SerializeField]
+        private TendrilRoot tendrilRoot;
+        internal TendrilNode meshRoot;
 
         public TendrilTip tipPrefab;
         public GameObject nodePrefab;
@@ -116,6 +117,15 @@ namespace TapRoot.Tendril
 
         public TendrilNode CreateNewNode()
         {
+            if(tendrilRoot == parent)
+            {
+                tendrilRoot.minimapVis.SetActive(true);
+
+                float vislen = 2 * Vector2.Distance(parent.transform.position, tendrilRoot.transform.position);
+                tendrilRoot.minimapVis.transform.localScale = new Vector3(2, vislen, 1);
+                tendrilRoot.minimapVis.transform.localPosition = new Vector3(0, vislen / 2, 1);
+            }
+
             // spawn new node object and setup position/rotation
             GameObject newNode = Instantiate(nodePrefab);
             newNode.transform.localScale *= 0.5f;
@@ -123,7 +133,7 @@ namespace TapRoot.Tendril
             newNode.transform.rotation = Quaternion.LookRotation(Vector3.back, parent.transform.position - transform.position);
             newNode.transform.SetParent(tendrilRoot.transform);
 
-            newNode.GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)tendrilRoot.player.number];
+            //newNode.GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)tendrilRoot.player.number];
 
             //set collider
             float length = 2 * Vector2.Distance(parent.transform.position, newNode.transform.position);
@@ -135,6 +145,9 @@ namespace TapRoot.Tendril
             TendrilNode newNodeComponent = newNode.GetComponent<TendrilNode>();
             newNodeComponent.AddChild(this);    //new node children set
             newNodeComponent.SetParent(parent); //new node parent set
+
+            newNodeComponent.minimapVis.transform.localScale = new Vector3(2, length, 1);
+            newNodeComponent.minimapVis.transform.localPosition = new Vector3(0, length / 2, 0);
 
             // update parent references
             if (parent != null)
@@ -178,23 +191,35 @@ namespace TapRoot.Tendril
 
                         break;
                     case Layers.Tendril:
-                        TendrilNode node = collision.gameObject.GetComponent<TendrilNode>();
-                        if (node != null && !(((Growing)mState).timeSinceBranch < 0.05f && collision.gameObject.GetComponent<TendrilTip>().tendrilRoot.player.number != tendrilRoot.player.number))// && node != parent)
-                        {
-                            if (node.IsOnFire())
-                            {
-                                CatchFire();
-                            }
-                            else
-                            {
-                                SetState(new Alive(this));
 
-                                if (mAudioSource && AudioClipManager.instance.HitTendrilSound)
-                                {
-                                    mAudioSource.PlayOneShot(AudioClipManager.instance.HitTendrilSound);
-                                }
-                            }
+                        TendrilNode node = collision.gameObject.GetComponent<TendrilNode>();
+
+                        if(node == null)
+                        {
+                            node = collision.gameObject.GetComponentInParent<TendrilNode>();
                         }
+
+                        // ignore hits for 50ms after branching
+                        if (node.GetType() == typeof(TendrilTip) &&
+                            ((Growing)mState).timeSinceBranch < 0.05f &&
+                            ((TendrilTip)node).tendrilRoot.GetPlayerNumber() == tendrilRoot.GetPlayerNumber())// && node != parent))
+                        {
+                            break;
+                        }
+
+                        if (node != null && node.IsOnFire())
+                        {
+                            CatchFire();
+                            break;
+                        }
+
+                        SetState(new Alive(this));
+
+                        if (mAudioSource && AudioClipManager.instance.HitTendrilSound)
+                        {
+                            mAudioSource.PlayOneShot(AudioClipManager.instance.HitTendrilSound);
+                        }
+
                         break;
                 }
             }
