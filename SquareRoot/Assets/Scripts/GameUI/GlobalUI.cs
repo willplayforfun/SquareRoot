@@ -24,7 +24,7 @@ public class GlobalUI : MonoBehaviour
 
         switch (numPlayers)
         {
-            case 1:
+            //case 1:
             case 2:
                 minimap_2p.SetActive(true);
                 break;

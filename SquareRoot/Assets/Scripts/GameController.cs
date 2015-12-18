@@ -16,8 +16,6 @@ public class GameController : MonoBehaviour
     public PlayerObject playerPrefab;
     List<PlayerObject> players;
 
-    bool musicIsPlaying;
-
     private bool paused;
     public void TogglePause(bool showMenu = true)
     {
@@ -57,11 +55,6 @@ public class GameController : MonoBehaviour
     {
         gameObject.tag = Tags.GameController;
         Time.timeScale = 1.0f;
-        if (!musicIsPlaying)
-        {
-            GetComponent<AudioSource>().Play();
-            musicIsPlaying = true;
-        }
     }
 
     void Start()
@@ -96,6 +89,9 @@ public class GameController : MonoBehaviour
         paused = false;
         matchStart = Time.time;
         matchOngoing = true;
+
+        // start music
+        GetComponent<AudioSource>().Play();
     }
 
     void Update()
@@ -137,11 +133,10 @@ public class GameController : MonoBehaviour
     public void EndMatch(PlayerObject winner = null)
     {
         matchOngoing = false;
-        if (musicIsPlaying)
-        {
-            GetComponent<AudioSource>().Stop();
-            musicIsPlaying = false;
-        }
+
+        // stop music
+        GetComponent<AudioSource>().Stop();
+
         if(winner != null)
         {
             Debug.LogFormat("Match concluded, {0} player was winner", winner.number.ToString());
