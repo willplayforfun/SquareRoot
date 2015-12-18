@@ -5,17 +5,41 @@ using UnityEngine.EventSystems;
 public class GlobalUI : MonoBehaviour
 {
     // references to UI elements in scene
+    public GameObject victoryPanel;
     public Text victoryText;
     public GameObject scoreScreen;
     public GameObject pauseMenu;
     public GameObject gameOverScreen;
     public GameObject gameOverFirstButton;
 
-    public GameObject minimap;
+    public GameObject minimap_2p;
+    public GameObject minimap_3p;
+    public GameObject minimap_4p;
+
+    public void SetMinimap(int numPlayers)
+    {
+        minimap_2p.SetActive(false);
+        minimap_3p.SetActive(false);
+        minimap_4p.SetActive(false);
+
+        switch (numPlayers)
+        {
+            case 1:
+            case 2:
+                minimap_2p.SetActive(true);
+                break;
+            case 3:
+                minimap_3p.SetActive(true);
+                break;
+            case 4:
+                minimap_4p.SetActive(true);
+                break;
+        }
+    }
 
     void Start()
     {
-        victoryText.gameObject.SetActive(false);
+        victoryPanel.SetActive(false);
         scoreScreen.SetActive(false);
         gameOverScreen.SetActive(false);
 
@@ -60,12 +84,12 @@ public class GlobalUI : MonoBehaviour
         text += " Wins!";
 
         victoryText.text = text;
-        victoryText.gameObject.SetActive(true);
+        victoryPanel.SetActive(true);
     }
 
     public void SetDrawText()
     {
         victoryText.text = "Draw! Everyone loses!";
-        victoryText.gameObject.SetActive(true);
+        victoryPanel.SetActive(true);
     }
 }

@@ -25,7 +25,7 @@ namespace TapRoot.Tendril
         {
             base.OnStateEnter();
 
-            ownerTip.GetComponent<Collider2D>().enabled = false;
+            //ownerTip.GetComponent<Collider2D>().enabled = false;
 
             ownerTip.newBranchCreated += NewBranchCreatedCallback;
         }
@@ -57,7 +57,7 @@ namespace TapRoot.Tendril
             ownerTip.tendrilCollider.offset = new Vector2(0, -1f * timeSinceNodeDropped * growthRate);
 
             // update minimap vis
-            ownerTip.minimapVis.transform.localScale = new Vector3(1, 2f * timeSinceNodeDropped * growthRate, 1);
+            ownerTip.minimapVis.transform.localScale = new Vector3(ownerTip.minimapVisWidth, 2f * timeSinceNodeDropped * growthRate, 1);
             ownerTip.minimapVis.transform.localPosition = new Vector3(0, - timeSinceNodeDropped * growthRate, 0);
 
 

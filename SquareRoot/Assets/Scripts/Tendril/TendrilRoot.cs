@@ -16,6 +16,10 @@ namespace TapRoot.Tendril
         {
             return player.number;
         }
+        internal void ShakePlayerCamera(float amount)
+        {
+            player.playerCamera.GetComponent<FollowingCamera>().ApplyShock(amount);
+        }
 
         protected override void Awake()
         {
@@ -31,6 +35,7 @@ namespace TapRoot.Tendril
             activeTip.meshRoot = this;
 
             minimapVis.SetActive(false);
+            minimapVis.GetComponent<MeshRenderer>().material.color = PlayerUI.playerColors[(int)player.number];
 
             onFireIndicator.SetActive(false);
             GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.NewBranchSound);

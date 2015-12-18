@@ -17,6 +17,8 @@ namespace TapRoot.Tendril
         private List<float> spreadProgressToNeighbors;
         private List<float> distanceToNeighbors;
 
+        private bool haveSpreadFire;
+
         public OnFire(TendrilNode obj)
                : base(obj)
         {
@@ -45,15 +47,20 @@ namespace TapRoot.Tendril
         {
             base.UpdateState(deltaTime);
 
+            haveSpreadFire = true;
+
             for (int i = 0; i < spreadProgressToNeighbors.Count; i++)
             {
                 if (spreadProgressToNeighbors[i] / distanceToNeighbors[i] > 1f)
                 {
+                    // TODO indices break on very long branches
                     owner.GetNeighbors()[i].CatchFire();
                 }
                 else
                 {
                     spreadProgressToNeighbors[i] += fireSpreadRate * deltaTime;
+
+                    haveSpreadFire = false;
 
                     // TODO update mesh and effects and stuff
                     Debug.DrawLine(owner.transform.position, owner.transform.position + (owner.GetNeighbors()[i].transform.position - owner.transform.position).normalized * spreadProgressToNeighbors[i]);
@@ -61,7 +68,7 @@ namespace TapRoot.Tendril
             }
 
             // stop burning
-            if (timeInState > timeUntilFireOut)
+            if (timeInState > timeUntilFireOut && haveSpreadFire)
             {
                 owner.Die();
             }

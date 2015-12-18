@@ -13,13 +13,25 @@ public enum PlayerNum
 
 public class PlayerObject : MonoBehaviour
 {
+    public bool debug;
+
     public void Lose()
     {
         alive_ = false;
         playerCamera_.GetComponent<FollowingCamera>().ApplyShock(8);
-        FocusOnMap();
-        playerCamera_.orthographicSize = zoomTarget;
+        //FocusOnMap();
+        //playerCamera_.orthographicSize = zoomTarget;
         GetComponent<AudioSource>().PlayOneShot(AudioClipManager.instance.ElimSound);
+
+        ui.Lose();
+
+        foreach(TendrilRoot root in roots)
+        {
+            if(root != null && root.IsAlive())
+            {
+                root.CutTendril();
+            }
+        }
     }
 
     public float startingResourceCount = 5;
@@ -349,7 +361,7 @@ public class PlayerObject : MonoBehaviour
             //resourceCount += 0.5f * Time.deltaTime;
 
             // spawn new tendril 
-            if (Time.time > nextScheduledTendril || (activeRootIndex < 0 && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod))
+            if (Time.time > nextScheduledTendril || (currentFocus == FocusState.Player && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod))
             {
                 Debug.Log("Spawning New Tendril");
                 SpawnTendril();
@@ -359,7 +371,7 @@ public class PlayerObject : MonoBehaviour
             // lose check
             if (resourceCount < gameController.requiredResources)
             {
-                alive_ = false;
+                Lose();
             }
 
             // handle input
@@ -369,7 +381,7 @@ public class PlayerObject : MonoBehaviour
                 if (activeRootIndex >= 0 && activeRoot != null)
                 {
                     // branching
-                    if (inputDevice.Action1.WasPressed || inputDevice.RightTrigger.WasPressed)
+                    if (inputDevice.Action1.WasPressed || inputDevice.RightTrigger.WasPressed || (debug && Input.GetKeyDown(KeyCode.F)))
                     {
                         Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
                         activeRoot.EndBranch();
@@ -383,7 +395,7 @@ public class PlayerObject : MonoBehaviour
                     activeRoot.BranchAim(playerCamera_.transform.TransformDirection(inputDevice.LeftStick.Vector));
 
                     // cutting
-                    if (inputDevice.Action2.WasPressed)
+                    if (inputDevice.Action2.WasPressed || (debug && Input.GetKeyDown(KeyCode.C)))
                     {
                         Debug.Log(number.ToString() + " player pressed Action 2 (cut tendril).");
                         activeRoot.CutTendril();
@@ -401,7 +413,7 @@ public class PlayerObject : MonoBehaviour
                     }
                 }
 
-                if (inputDevice.LeftBumper.WasPressed)
+                if (inputDevice.LeftBumper.WasPressed || (debug && Input.GetKeyDown(KeyCode.Q)))
                 {
                     GoToNextLeftTendril();
                     FocusOnTip();
@@ -409,7 +421,7 @@ public class PlayerObject : MonoBehaviour
                     ui.HideTendrilNotification();
                 }
 
-                if (inputDevice.RightBumper.WasPressed)
+                if (inputDevice.RightBumper.WasPressed || (debug && Input.GetKeyDown(KeyCode.E)))
                 {
                     GoToNextRightTendril();
                     FocusOnTip();
@@ -444,7 +456,7 @@ public class PlayerObject : MonoBehaviour
                 }
 
                 // pause
-                if (inputDevice.MenuWasPressed)// || !inputDevice.IsAttached)
+                if (inputDevice.MenuWasPressed || (debug && Input.GetKeyDown(KeyCode.Escape)))// || !inputDevice.IsAttached)
                 {
                     Debug.Log(number.ToString() + " player pressed pause.");
                     gameController.TogglePause();
@@ -502,10 +514,14 @@ public class PlayerObject : MonoBehaviour
                     playerCamera_.rect = new Rect(0, 0, 1, 1);
                     minCameraSize *= 0.25f;
                 }
-                else if (numPlayers < 4)
+                else if (numPlayers == 2)
                 {
                     playerCamera_.rect = new Rect(0, 0.5f, 1, 0.5f);
                     minCameraSize *= 0.5f;
+                }
+                else if(numPlayers == 3)
+                {
+                    playerCamera_.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
                 }
                 else
                 {
@@ -520,7 +536,8 @@ public class PlayerObject : MonoBehaviour
                 }
                 else if (numPlayers == 3)
                 {
-                    playerCamera_.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    //playerCamera_.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
                 }
                 else if (numPlayers == 4)
                 {
@@ -534,7 +551,8 @@ public class PlayerObject : MonoBehaviour
                 }
                 else
                 {
-                    playerCamera_.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    playerCamera_.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    //playerCamera_.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
                 }
                 break;
             case PlayerNum.Fourth:

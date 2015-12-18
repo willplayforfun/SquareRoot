@@ -18,6 +18,8 @@ namespace TapRoot.Tendril
         public MeshMaker mainMeshMaker;
         public MeshMaker sideMeshMaker;
 
+        public event Action NodeCaughtFire;
+
         internal void UpdateMainMesh(Vector3 newPosition, Vector3 up)
         {
             mainMeshMaker.UpdateMesh(newPosition, up);
@@ -60,6 +62,11 @@ namespace TapRoot.Tendril
             if (this.IsAlive())
             {
                 SetState(new OnFire(this));
+
+                if(NodeCaughtFire != null)
+                {
+                    NodeCaughtFire.Invoke();
+                }
             }
         }
         public void Die()

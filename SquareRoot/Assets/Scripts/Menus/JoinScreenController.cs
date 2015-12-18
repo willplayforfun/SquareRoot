@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿  using UnityEngine;
 using System.Collections.Generic;
 using InControl;
 
@@ -104,6 +104,15 @@ public class JoinScreenController : MonoBehaviour
                     // start game if the controller is already registered
                     LoadGame();
                 }
+            }
+
+            if(Input.GetKeyDown(KeyCode.Q))
+            {
+                AddDevice(null);
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                LoadGame();
             }
 
             // allow players to leave

@@ -98,6 +98,11 @@ public class LevelSelectionController : MonoBehaviour
             LoadLevel(currentIndex);
         }
 
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            LoadLevel(currentIndex);
+        }
+
         float targetX = currentIndex * (width - spacing);
         levelPanelsParent.transform.position = Vector3.Lerp(levelPanelsParent.transform.position, zeroPosition + targetX * Vector3.left, Time.deltaTime / smoothing );
     }

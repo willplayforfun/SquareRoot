@@ -5,4 +5,5 @@
     public const int Tendril = 10;
     public const int Resources = 11;
     public const int Tip = 12;
+    public const int LevelEdge = 17;
 }

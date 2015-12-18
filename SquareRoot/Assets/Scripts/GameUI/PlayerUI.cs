@@ -23,6 +23,8 @@ public class PlayerUI : MonoBehaviour
     public Image needBar;
     public Image resourceBar;
 
+    public Text loseText;
+
     public Image vignette;
     public Color vignetteColor
     {
@@ -65,8 +67,16 @@ public class PlayerUI : MonoBehaviour
         HideTendrilNotification();
         HideFireNotification();
 
+        loseText.enabled = false;
+
         resourceBar.color = playerColors[(int)player.number];
         //needBar.color = playerColors[(int)player.number];
+    }
+
+    public void Lose()
+    {
+        loseText.enabled = true;
+        vignetteColor = Color.black;
     }
 
     void Update()
