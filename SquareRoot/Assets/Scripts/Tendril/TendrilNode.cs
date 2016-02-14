@@ -18,6 +18,8 @@ namespace TapRoot.Tendril
         public MeshMaker mainMeshMaker;
         public MeshMaker sideMeshMaker;
 
+        public bool mainNode;
+
         public event Action NodeCaughtFire;
 
         internal void UpdateMainMesh(Vector3 newPosition, Vector3 up)
@@ -180,7 +182,10 @@ namespace TapRoot.Tendril
 
         public virtual void AddResources(float amount)
         {
-            parent.AddResources(amount);
+            if (parent != null)
+            { 
+                parent.AddResources(amount);
+            }
         }
     }
 }

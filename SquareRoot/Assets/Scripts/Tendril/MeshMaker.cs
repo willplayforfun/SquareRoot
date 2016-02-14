@@ -6,12 +6,27 @@ using TapRoot.Tendril;
 
 public class MeshMaker : MonoBehaviour
 {
+    struct VertexSet
+    {
+        public Vector3 position;
+        public Vector3 direction;
+
+        //Vector3[] vertices;
+        //Vector3[] normals;
+        //Vector3[] uvs;
+    }
+
     private List<Vector3> vertices;
     private List<Vector3> normals;
     private List<Vector2> uvs;
     private List<int> tris;
-    private Mesh tendrilMesh;
-    private MeshFilter meshfilter;
+
+    private List<VertexSet> sets;
+
+    private Mesh primaryTendrilMesh;
+    private Mesh secondaryTendrilMesh;
+    public MeshFilter primaryMeshFilter;
+    public MeshFilter secondaryMeshFilter;
 
     public float uvScale = 0.5f;
 
@@ -21,13 +36,15 @@ public class MeshMaker : MonoBehaviour
         normals = new List<Vector3>();
         uvs = new List<Vector2>();
         tris = new List<int>();
-        tendrilMesh = new Mesh();
-        meshfilter = GetComponent<MeshFilter>();
+        sets = new List<VertexSet>();
+        primaryTendrilMesh = new Mesh();
+        secondaryTendrilMesh = new Mesh();
+        //primaryMeshFilter = GetComponent<MeshFilter>();
     }
 
     void Start()
     {
-        if (meshfilter != null)
+        if (primaryMeshFilter != null)
         {
             if (this.GetType() == typeof(TendrilRoot))
             {
@@ -41,8 +58,21 @@ public class MeshMaker : MonoBehaviour
         }
     }
 
+    public void SetDeath(float t)
+    {
+
+        secondaryTendrilMesh.colors[0] = new Color(1, 1, 1, 0);
+
+    }
+
+
     public void UpdateMesh(Vector3 newPosition, Vector3 up)
     {
+        VertexSet set = new VertexSet();
+        set.position = newPosition;
+        set.direction = up;
+        sets.Add(set);
+
         Vector3 right = Vector3.Cross(up, Vector3.back);
 
         float randomScale1 = UnityEngine.Random.Range(0.8f, 1.2f);
@@ -53,7 +83,7 @@ public class MeshMaker : MonoBehaviour
 
         int end = vertices.Count - 1;
 
-        if (vertices.Count > 3)
+        if (sets.Count > 1)
         {
             float distanceFromLast = Vector3.Distance(vertices[end], vertices[end - 2]);
 
@@ -70,7 +100,7 @@ public class MeshMaker : MonoBehaviour
         normals.Add(Vector3.back);
 
 
-        if (vertices.Count > 3)
+        if (sets.Count > 1)
         {
             tris.Add(end);
             tris.Add(end - 1);
@@ -81,15 +111,24 @@ public class MeshMaker : MonoBehaviour
             tris.Add(end - 1);
         }
 
-        tendrilMesh.SetVertices(vertices);
-        tendrilMesh.uv = uvs.ToArray();
-        tendrilMesh.normals = normals.ToArray();
-        tendrilMesh.triangles = tris.ToArray();
+        primaryTendrilMesh.SetVertices(vertices);
+        primaryTendrilMesh.uv = uvs.ToArray();
+        primaryTendrilMesh.normals = normals.ToArray();
+        primaryTendrilMesh.triangles = tris.ToArray();
 
-        tendrilMesh.RecalculateNormals();
-        tendrilMesh.RecalculateBounds();
+        primaryTendrilMesh.RecalculateNormals();
+        primaryTendrilMesh.RecalculateBounds();
 
-        meshfilter.mesh = tendrilMesh;
+        secondaryTendrilMesh.SetVertices(vertices);
+        secondaryTendrilMesh.uv = uvs.ToArray();
+        secondaryTendrilMesh.normals = normals.ToArray();
+        secondaryTendrilMesh.triangles = tris.ToArray();
+
+        secondaryTendrilMesh.RecalculateNormals();
+        secondaryTendrilMesh.RecalculateBounds();
+
+        primaryMeshFilter.mesh = primaryTendrilMesh;
+        secondaryMeshFilter.mesh = secondaryTendrilMesh;
     }
     public void AnimateDestroy(GameObject target = null)
     {
@@ -110,7 +149,8 @@ public class MeshMaker : MonoBehaviour
                 vertices[i] = Vector3.Lerp(vertices[i], average, progress);
                 vertices[i + 1] = Vector3.Lerp(vertices[i + 1], average, progress);
 
-                tendrilMesh.SetVertices(vertices);
+                primaryTendrilMesh.SetVertices(vertices);
+                secondaryTendrilMesh.SetVertices(vertices);
             }
 
             yield return null;
