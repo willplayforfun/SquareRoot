@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TapRoot.Tendril;
+using System;
 
 public class SpawnPoint : MonoBehaviour
 {
@@ -32,5 +33,10 @@ public class SpawnPoint : MonoBehaviour
     public void AttachRoot(TendrilRoot root)
     {
         mRoot = root;
+    }
+
+    public void EnableActiveTip(bool b)
+    {
+        mRoot.activeTip.enabled = b;
     }
 }

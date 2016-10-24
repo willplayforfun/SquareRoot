@@ -149,6 +149,7 @@ public class PlayerObject : MonoBehaviour
             activeRootIndex_ = value;
         }
     }
+    int newestRootIndex;
     private TendrilRoot activeRoot
     {
         get
@@ -190,6 +191,7 @@ public class PlayerObject : MonoBehaviour
         if (mSpawnPoints != null && mSpawnPoints.Length > 0)
         {
             SpawnTendril();
+            mSpawnPoints[newestRootIndex].EnableActiveTip(true);
         }
         else
         {
@@ -204,12 +206,38 @@ public class PlayerObject : MonoBehaviour
 
         int attempts = 0;
         int index = Random.Range(0, mSpawnPoints.Length);
-        SpawnPoint sp;
-        while((sp = mSpawnPoints[index]).IsInUse() && attempts < 10)
+        SpawnPoint sp = mSpawnPoints[index];
+
+        //old way of determining index;
+        /*while((sp = mSpawnPoints[index]).IsInUse() && attempts < 10)
         {
             index = Random.Range(0, mSpawnPoints.Length);
             attempts++;
+        }*/
+
+        // Better way of finding a spawn point
+        List<SpawnPoint> unusedSpawnPoints = new List<SpawnPoint>();
+        // add all unused spawnpoints to list
+        foreach (SpawnPoint spawn in mSpawnPoints)
+        {
+            if (!spawn.IsInUse())
+            {
+                unusedSpawnPoints.Add(spawn);
+            }
         }
+        // pick one at random
+        int unusedIndex = Random.Range(0, unusedSpawnPoints.Count);
+        for (int i = 0; i < mSpawnPoints.Length; i++)
+        {
+            if (mSpawnPoints[i] == unusedSpawnPoints[unusedIndex])
+            {
+                sp = mSpawnPoints[i];
+                index = i;
+                break;
+            }
+        }
+        // now that sp is determined and we have and index for a root:
+        // Better way code ends here
 
         if (!sp.IsInUse())
         {
@@ -217,8 +245,14 @@ public class PlayerObject : MonoBehaviour
             newRoot.SetPlayer(this);
             newRoot.transform.position = sp.position;
             newRoot.transform.rotation = sp.rotation;
+            //Greatest hack-fix of all time pls?
+            //newRoot.activeTip.EndBranch();
+            //newRoot.activeTip.enabled = false;
+            //pls?
             sp.AttachRoot(newRoot);
             roots[index] = newRoot;
+            newestRootIndex = index;
+            
 
             // if focused on player
             if (currentFocus == FocusState.Player)
@@ -374,6 +408,20 @@ public class PlayerObject : MonoBehaviour
         }
         return false;
     }
+
+    private bool GoToNewestTendril()
+    {
+        if(roots[newestRootIndex] != null && roots[newestRootIndex].IsAlive())
+        {
+            currentTendrilIndicator.gameObject.SetActive(true);
+            currentTendrilIndicator.position = roots[newestRootIndex].transform.position - 3f * roots[newestRootIndex].transform.up;
+
+            activeRootIndex = newestRootIndex;
+            FocusOnRoot();
+            return true;
+        }
+        return false;
+    }
     
     void Update()
     {
@@ -383,13 +431,18 @@ public class PlayerObject : MonoBehaviour
             // resource test
             //resourceCount += 0.5f * Time.deltaTime;
 
-            // spawn new tendril 
+            // notify player of new tendril 
             if (!gameDisabled && (Time.time > nextScheduledTendril || 
                                   (currentFocus == FocusState.Player && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod)))
             {
-                Debug.Log("Spawning New Tendril");
+                Debug.Log("New Tendril Available");
+                //ui.ShowTendrilNotification();
+                //ui.vignetteColor = new Color(0, 255, 0, 0.5f);
+                //ui.FadeVignetteToColor(new Color(0, 255, 0, 0), 1);
                 SpawnTendril();
-                
+                mSpawnPoints[newestRootIndex].EnableActiveTip(false);
+
+
             }
 
             // lose check
@@ -405,11 +458,21 @@ public class PlayerObject : MonoBehaviour
                 if (activeRootIndex >= 0 && activeRoot != null)
                 {
                     // branching
+                    //if (inputDevice.Action1.WasPressed && (Time.time > nextScheduledTendril ||
+                    //              (currentFocus == FocusState.Player && Time.time - lastTendrilSpawn > noTendrilsSpawnPeriod)))
+                    //{
+                    //    SpawnTendril();
+                    //    GoToNewestTendril();
+                    //    FocusOnTip();
+                    //    mSpawnPoints[newestRootIndex].EnableActiveTip(false);
+                    //    ui.HideTendrilNotification();
+                    //}
                     if (inputDevice.Action1.WasPressed || inputDevice.RightTrigger.WasPressed || (debug && Input.GetKeyDown(KeyCode.F)))
                     {
                         Debug.Log(number.ToString() + " player pressed Action 1 (branch).");
                         activeRoot.EndBranch();
                         activeRoot.StartBranch();
+                        mSpawnPoints[activeRootIndex_].EnableActiveTip(true);
                     }
                     if (inputDevice.Action1.WasReleased || inputDevice.RightTrigger.WasReleased)
                     {
