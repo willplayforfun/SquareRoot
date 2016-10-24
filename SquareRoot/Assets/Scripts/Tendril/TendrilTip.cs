@@ -125,6 +125,7 @@ namespace TapRoot.Tendril
                 parentNode.AddChild(newtip);
 
                 // change us
+                meshRoot.UpdateMainMesh(transform.position, -transform.up);
                 meshRoot = parentNode;
                 growDirection = newDirection;
                 transform.position += 0.5f * transform.up;
