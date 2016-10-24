@@ -11,7 +11,7 @@ namespace TapRoot.Tendril
          * children nodes have their state set to "Dead"
          * and this node is destroyed
          */
-        static float deathSpreadRate = 2.0f;
+        static float deathSpreadRate = 200.0f;
         static float timeUntilDecompose = 3.0f;
 
         private List<TendrilNode> neighbors;
@@ -40,9 +40,18 @@ namespace TapRoot.Tendril
         internal override void OnStateEnter()
         {
             base.OnStateEnter();
-
-            //owner.mainMeshMaker.GetComponent<MeshRenderer>().material.color = owner.deadColor;
-            //owner.sideMeshMaker.GetComponent<MeshRenderer>().material.color = owner.deadColor;
+            if (owner.mainMeshMaker != null)
+            {
+                owner.mainMeshMaker.primaryMeshFilter.GetComponent<MeshRenderer>().material.color = Color.black;
+            }
+            if (owner.sideMeshMaker != null)
+            {
+                owner.sideMeshMaker.primaryMeshFilter.GetComponent<MeshRenderer>().material.color = Color.black;
+            }
+            foreach (TendrilNode node in owner.GetChildren())
+            {
+                node.Die();
+            }
         }
         internal override void UpdateState(float deltaTime)
         {

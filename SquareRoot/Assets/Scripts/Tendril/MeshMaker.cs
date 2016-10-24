@@ -46,13 +46,13 @@ public class MeshMaker : MonoBehaviour
     {
         if (primaryMeshFilter != null)
         {
-            if (this.GetType() == typeof(TendrilRoot))
+            if (transform.parent.GetComponent<TendrilRoot>() != null)
             {
-                UpdateMesh(transform.position, transform.up);
+                UpdateMesh(transform.position, -transform.up);
             }
             else
             {
-                UpdateMesh(transform.position, -transform.up);
+                UpdateMesh(transform.position, transform.up);
 
             }
         }
@@ -60,11 +60,17 @@ public class MeshMaker : MonoBehaviour
 
     public void SetDeath(float t)
     {
-
-        secondaryTendrilMesh.colors[0] = new Color(1, 1, 1, 0);
-
+        if (primaryTendrilMesh.vertexCount > 0)
+        {
+            Debug.LogFormat("Object ({0}) has [{1}] vertices", name, primaryTendrilMesh.vertexCount);
+            Color[] colors = new Color[primaryTendrilMesh.vertexCount];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = new Color(1 - t, 1 - t, 1 - t, 1);
+            }
+            primaryTendrilMesh.colors = colors;
+        }
     }
-
 
     public void UpdateMesh(Vector3 newPosition, Vector3 up)
     {
@@ -128,7 +134,7 @@ public class MeshMaker : MonoBehaviour
         secondaryTendrilMesh.RecalculateBounds();
 
         primaryMeshFilter.mesh = primaryTendrilMesh;
-        secondaryMeshFilter.mesh = secondaryTendrilMesh;
+        //secondaryMeshFilter.mesh = secondaryTendrilMesh;
     }
     public void AnimateDestroy(GameObject target = null)
     {
@@ -150,7 +156,7 @@ public class MeshMaker : MonoBehaviour
                 vertices[i + 1] = Vector3.Lerp(vertices[i + 1], average, progress);
 
                 primaryTendrilMesh.SetVertices(vertices);
-                secondaryTendrilMesh.SetVertices(vertices);
+                //secondaryTendrilMesh.SetVertices(vertices);
             }
 
             yield return null;
